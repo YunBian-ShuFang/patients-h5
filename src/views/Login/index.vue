@@ -1,19 +1,47 @@
 <script setup lang="ts">
-import { loginByPassword } from '@/services/user'
+import { loginByMobile, loginByPassword, sendMobileCode } from '@/services/user'
 import { useUserStore } from '@/stores'
 import { useRoute, useRouter } from 'vue-router'
-import { mobileRules, passwordRules } from '@/utils/rules'
-import { showToast } from 'vant'
-import { ref } from 'vue'
+import { mobileRules, passwordRules, codeRules } from '@/utils/rules'
+import { showSuccessToast, showToast, type FormInstance } from 'vant'
+import { onUnmounted, ref } from 'vue'
+
+const store = useUserStore()
+const router = useRouter()
+const route = useRoute()
 
 // 密码登陆数据结构
 const isAgree = ref(false)
 const mobile = ref('13230000002')
 const password = ref('abc12345')
+// 短信验证登陆
+const code = ref('')
 
-const store = useUserStore()
-const router = useRouter()
-const route = useRoute()
+// 发送验证码
+const form = ref<FormInstance>()
+const time = ref(0)
+let timeId: number
+const send = async () => {
+  // 倒计时time的值大于0，不能发送验证码
+  if (time.value > 0) return
+  // 验证不通过报错，阻止程序继续执行
+  await form.value?.validate('mobile')
+  await sendMobileCode(mobile.value, 'login')
+  showSuccessToast('发送成功')
+  time.value = 60
+  // 倒计时
+  clearInterval(timeId)
+  timeId = window.setInterval(() => {
+    time.value--
+    if (time.value <= 0) window.clearInterval(timeId)
+  }, 1000)
+}
+
+// 在组件卸载时，使用 clearInterval 清除定时器，避免可能的内存泄漏或意外操作
+onUnmounted(() => {
+  window.clearInterval(timeId)
+})
+
 // 表单提交
 const login = async () => {
   if (!isAgree.value) {
@@ -21,7 +49,9 @@ const login = async () => {
     return
   }
   // 验证完毕，进行登陆
-  const res = await loginByPassword(mobile.value, password.value)
+  const res = isPass.value
+    ? await loginByPassword(mobile.value, password.value)
+    : await loginByMobile(mobile.value, code.value)
   // 将数据存入仓库
   store.setUser(res.data)
   console.log(res)
@@ -31,8 +61,12 @@ const login = async () => {
   // } else {
   //   router.push('/') // 跳转到首页
   // }
+  // 如果有回跳地址就进行回跳，没有跳转到个人中心，replace目的 a => login  => b  变成 a => b
   router.push((route.query.returnUrl as string) || '/user')
+  showSuccessToast('登陆成功')
 }
+
+const isPass = ref(true)
 
 const handleRightClick = () => {
   alert('右侧按钮被点击了！')
@@ -48,9 +82,9 @@ const handleRightClick = () => {
     ></cp-nav-bar>
     <!-- 头部 -->
     <div class="login-head">
-      <h3>密码登陆</h3>
-      <a href="javascript:;">
-        <span>手机验证码登陆</span>
+      <h3>{{ isPass ? '密码登陆' : '手机验证码登陆' }}</h3>
+      <a href="javascript:;" @click="isPass = !isPass">
+        <span>{{ !isPass ? '密码登陆' : '手机验证码登陆' }}</span>
         <van-icon name="arrow"></van-icon>
       </a>
     </div>
@@ -58,16 +92,30 @@ const handleRightClick = () => {
     <van-form autocomplete="off" @submit="login">
       <van-field
         v-model="mobile"
+        name="mobile"
         :rules="mobileRules"
         type="tel"
         placeholder="请输入手机号"
       ></van-field>
       <van-field
+        v-if="isPass"
         v-model="password"
         :rules="passwordRules"
         type="password"
         placeholder="请输入密码"
       ></van-field>
+      <van-field
+        v-else
+        :rules="codeRules"
+        v-model="code"
+        placeholder="请输入短信验证码"
+      >
+        <template #button>
+          <span class="btn-send" :class="{ active: time > 0 }" @click="send">
+            {{ time > 0 ? `${time}s后再次发送` : '发送验证码' }}
+          </span>
+        </template>
+      </van-field>
       <div class="cp-cell">
         <van-checkbox v-model="isAgree">
           <span>我已同意</span>
