@@ -1,3 +1,4 @@
+import { useUserStore } from '@/stores'
 import { createRouter, createWebHistory } from 'vue-router'
 
 // createRouter 创建路由实例，===> new VueRouter()
@@ -55,6 +56,17 @@ const router = createRouter({
     //   component: () => import('../views/AboutView.vue')
     // }
   ]
+})
+
+// 访问权限控制
+router.beforeEach((to) => {
+  // 用户仓库
+  const store = useUserStore()
+  // 不需要登陆的页面，白名单
+  const whiteList = ['/login']
+  // 如果没有登陆且不在白名单的，跳去登陆
+  if (!store.user?.token && !whiteList.includes(to.path)) return '/login'
+  // 否则不做处理
 })
 
 export default router
