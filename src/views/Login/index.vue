@@ -14,6 +14,8 @@ const route = useRoute()
 const isAgree = ref(false)
 const mobile = ref('13230000002')
 const password = ref('abc12345')
+// 控制密码是否显示
+const show = ref(false)
 // 短信验证登陆
 const code = ref('')
 
@@ -101,9 +103,16 @@ const handleRightClick = () => {
         v-if="isPass"
         v-model="password"
         :rules="passwordRules"
-        type="password"
+        :type="show ? 'text' : 'password'"
         placeholder="请输入密码"
-      ></van-field>
+      >
+        <template #button>
+          <cp-icon
+            @click="show = !show"
+            :name="`login-eye-${show ? 'on' : 'off'}`"
+          ></cp-icon>
+        </template>
+      </van-field>
       <van-field
         v-else
         :rules="codeRules"
@@ -137,7 +146,7 @@ const handleRightClick = () => {
     <div class="login-other">
       <van-divider>第三方登陆</van-divider>
       <div class="icon">
-        <img src="@/assets/qq.svg" alt="" />
+        <img src="@/assets/icons/qq.svg" alt="" />
       </div>
     </div>
   </div>
