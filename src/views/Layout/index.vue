@@ -2,11 +2,13 @@
 
 <template>
   <div class="layout-page">
-    首页布局
+    <!-- 首页布局
     <svg aria-hidden="true">
-      <!-- #icon-文件夹名称-图片名称 -->
+      #icon-文件夹名称-图片名称
       <use href="#icon-login-eye-off"></use>
-    </svg>
+    </svg> -->
+    <router-view></router-view>
+    layout
   </div>
 </template>
 
