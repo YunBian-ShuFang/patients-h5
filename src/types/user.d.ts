@@ -19,3 +19,37 @@ export type CodeType =
   | 'changeMobile'
   | 'forgetPassword'
   | 'bindMobile'
+
+// 个人信息
+/* 扩展 
+  Pink 用于从一个类型中选择特定的属性，创建一个新类型。语法如下：
+  Pink<T, K>
+  T是要选择属性的类型
+  K是要从T中选择的属性键的联合类型
+
+  Omit 用于从一个类型中排除特定的属性，创建一个新类型。语法如下：
+  Omit<T, K>
+  T是要排除属性的类型
+  K是要从T中排除的属性键的联合类型
+*/
+type OmitUser = Omit<User, 'token'>
+export type UserInfo = OmitUser & {
+  // 关注数量
+  likeNumber: number
+  // 收藏数量
+  collectionNumber: number
+  // 我的总积分
+  score: number
+  // 我的优惠券数量
+  couponNumber: number
+  orderInfo: {
+    // 待付款
+    paidNumber: number
+    // 待发货
+    receivedNumber: number
+    // 待收货
+    shippedNumber: number
+    // 已完成
+    finishedNumber: number
+  }
+}

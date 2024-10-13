@@ -28,3 +28,10 @@ export const loginByMobile = (mobile: string, code: string) => {
     data: { mobile, code }
   })
 }
+
+// 获取个人用户信息
+export const getUserInfo = () => {
+  return instance({
+    url: '/patient/myUser'
+  })
+}
