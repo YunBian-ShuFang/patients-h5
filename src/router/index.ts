@@ -1,5 +1,7 @@
 import { useUserStore } from '@/stores'
 import { createRouter, createWebHistory } from 'vue-router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 
 // createRouter 创建路由实例，===> new VueRouter()
 // history 是路由模式，hash模式，history模式
@@ -61,6 +63,8 @@ const router = createRouter({
 
 // 前置守卫 -- 访问权限控制
 router.beforeEach((to) => {
+  // 加载进度条开启
+  NProgress.start()
   // 用户仓库
   const store = useUserStore()
   // 不需要登陆的页面，白名单
@@ -74,6 +78,13 @@ router.beforeEach((to) => {
 router.afterEach((to) => {
   // 页面标题
   document.title = `${to.meta.title || ''}-优医问诊`
+  // 进度条关闭
+  NProgress.done()
+})
+
+NProgress.configure({
+  // 设置不显示加载时的小圆圈（spinner）
+  showSpinner: false
 })
 
 export default router

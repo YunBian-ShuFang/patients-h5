@@ -36,3 +36,7 @@
     padding: 0;
   }
   
+  // 进度条颜色配置
+  #nprogress .bar {
+    background-color: var(--cp-primary) !important;
+  }
