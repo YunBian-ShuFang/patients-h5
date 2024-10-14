@@ -13,7 +13,7 @@ onMounted(async () => {
 const tools = [
   { label: '我的问诊', path: '/' },
   { label: '我的处方', path: '/' },
-  { label: '家庭档案', path: '/' },
+  { label: '家庭档案', path: '/patient' },
   { label: '住址管理', path: '/' },
   { label: '我的评价', path: '/' },
   { label: '官方客服', path: '/' },

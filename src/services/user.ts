@@ -35,3 +35,8 @@ export const getUserInfo = () => {
     url: '/patient/myUser'
   })
 }
+
+// 获取家庭患者信息列表
+export const getPatientList = () => {
+  return instance({ url: '/patient/mylist' })
+}

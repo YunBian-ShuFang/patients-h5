@@ -19,10 +19,12 @@ const router = createRouter({
     // 首页布局容器
     {
       path: '/',
+      // 一级路由容器
       // component: () => import('@/views/Login/index.vue')
       component: () => import('@/views/Layout/index.vue'),
       redirect: '/home',
       children: [
+        // 二级页面
         {
           path: '/home',
           component: () => import('@/views/Home/index.vue'),
@@ -44,6 +46,11 @@ const router = createRouter({
           meta: { title: '个人中心' }
         }
       ]
+    },
+    {
+      path: '/patient',
+      component: () => import('@/views/User/PatientPage.vue'),
+      meta: { title: '家庭档案' }
     },
     {
       path: '/login',
