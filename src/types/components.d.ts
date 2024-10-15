@@ -1,5 +1,6 @@
 import CpNavBar from '@/components/CpNavBar.vue'
 import CpIcon from '@/components/CpIcon.vue'
+import type CpRadioBtn from '@/components/CpRadioBtn.vue'
 
 // 使用 TypeScript 的声明合并功能扩展 Vue 模块
 declare module 'vue' {
@@ -8,5 +9,6 @@ declare module 'vue' {
     // 将 CpNavBar 组件的类型添加到 GlobalComponents 接口中
     CpNavBar: typeof CpNavBar
     CpIcon: typeof CpIcon
+    CpRadioBtn: typeof CpRadioBtn
   }
 }
