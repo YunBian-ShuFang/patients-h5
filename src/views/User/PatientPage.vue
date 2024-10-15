@@ -1,7 +1,65 @@
 <script setup lang="ts">
-import { getPatientList } from '@/services/user'
-import type { PatientList } from '@/types/user'
-import { onMounted, ref } from 'vue'
+import { addPatient, getPatientList } from '@/services/user'
+import type { Patient, PatientList } from '@/types/user'
+import { idCardRules, nameRules } from '@/utils/rules'
+import {
+  showConfirmDialog,
+  showFailToast,
+  showSuccessToast,
+  type FormInstance
+} from 'vant'
+import { computed, onMounted, ref } from 'vue'
+
+// 打开侧滑栏
+const show = ref(false)
+const showPopup = () => {
+  // 重置表单
+  patient.value = { ...initPatient }
+  show.value = true
+}
+
+// 表单
+// 单选性别选项
+const options = [
+  { label: '男', value: 1 },
+  { label: '女', value: 0 }
+]
+// 表单数据绑定
+// 初始值
+const initPatient: Patient = {
+  name: '',
+  idCard: '',
+  gender: 1,
+  defaultFlag: 0
+}
+const patient = ref<Patient>({ ...initPatient })
+// 默认值需要转换
+const defaultFlag = computed({
+  get() {
+    return patient.value.defaultFlag === 1 ? true : false
+  },
+  set(value) {
+    patient.value.defaultFlag = value ? 1 : 0
+  }
+})
+// 保存，整体校验
+const form = ref<FormInstance>()
+const onSubmit = async () => {
+  await form?.value?.validate()
+  // 性别需跟身份证一致，身份证号倒数第二位，单数是男，双数是女
+  const gender = +patient.value.idCard.slice(-2, -1) % 2
+  if (gender !== patient.value.gender) {
+    await showConfirmDialog({
+      title: '温馨提示！',
+      message: '填写的性别和身份证号中的不一致\n您确认提交吗？'
+    })
+  }
+  console.log('校验通过')
+  await addPatient(patient.value)
+  show.value = false
+  loadList()
+  showSuccessToast('添加成功')
+}
 
 // 页面初始化加载数据
 const list = ref<PatientList>([])
@@ -24,7 +82,7 @@ onMounted(async () => {
         <div class="info">
           <span class="name">{{ item.name }}</span>
           <span class="id">
-            {{ item.idCard.replace(/^(.{.6}) +(.{.4})$/, '\$1********\$2') }}
+            {{ item.idCard.replace(/^(.{6}).+(.{4})$/, '\$1********\$2') }}
           </span>
           <span>{{ item.genderValue }}</span>
           <span>{{ item.age }}岁</span>
@@ -32,21 +90,50 @@ onMounted(async () => {
         <div class="icon"><cp-icon name="user-edit"></cp-icon></div>
         <div class="tag" v-if="item.defaultFlag === 1">默认</div>
       </div>
-      <!-- <div class="patient-item">
-        <div class="info">
-          <span class="name">李富贵</span>
-          <span class="id">321111********6164</span>
-          <span>男</span>
-          <span>15岁</span>
-        </div>
-        <div class="icon"><cp-icon name="user-edit"></cp-icon></div>
-      </div> -->
-      <div class="patient-add" v-if="list.length < 6">
+      <div class="patient-add" v-if="list.length < 6" @click="showPopup">
         <cp-icon name="user-add"></cp-icon>
         <p>添加患者</p>
       </div>
       <div class="patient-tip">最多可添加6人</div>
     </div>
+    <!-- 测边栏 -->
+    <van-popup v-model:show="show" position="right">
+      <!-- <van-popup :show="show" @update:show="show = $event" position="right"> -->
+      <cp-nav-bar
+        :back="() => (show = false)"
+        title="添加患者"
+        right-text="保存"
+        @click-right="onSubmit"
+      ></cp-nav-bar>
+      <van-form accesskey="off" ref="form">
+        <van-field
+          label="真实姓名"
+          placeholder="请输入真实姓名"
+          v-model="patient.name"
+          :rules="nameRules"
+        ></van-field>
+        <van-field
+          label="身份证号"
+          placeholder="请输入身份证号"
+          v-model="patient.idCard"
+          :rules="idCardRules"
+        ></van-field>
+        <van-field label="性别" class="pb4">
+          <!-- 单选按钮组件 -->
+          <template #input>
+            <cp-radio-btn
+              :options="options"
+              v-model="patient.gender"
+            ></cp-radio-btn>
+          </template>
+        </van-field>
+        <van-field label="默认就诊人">
+          <template #input>
+            <van-checkbox v-model="defaultFlag" :icon-size="18" round />
+          </template>
+        </van-field>
+      </van-form>
+    </van-popup>
   </div>
 </template>
 
@@ -127,8 +214,16 @@ onMounted(async () => {
       color: var(--cp-tip);
       padding: 12px 0;
     }
-    .pd4 {
-      padding-bottom: 4px;
+  }
+  .pd4 {
+    padding-bottom: 4px;
+  }
+  :deep() {
+    .van-popup {
+      width: 100%;
+      height: 100%;
+      padding-top: 46px;
+      box-sizing: border-box;
     }
   }
 }

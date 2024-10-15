@@ -1,4 +1,4 @@
-import type { CodeType } from '@/types/user'
+import type { CodeType, Patient } from '@/types/user'
 import { request, instance } from '@/utils/request'
 
 // 密码登陆
@@ -39,4 +39,13 @@ export const getUserInfo = () => {
 // 获取家庭患者信息列表
 export const getPatientList = () => {
   return instance({ url: '/patient/mylist' })
+}
+
+// 家庭患者 -- 添加患者
+export const addPatient = (patient: Patient) => {
+  return instance({
+    url: '/patient/add',
+    method: 'post',
+    data: patient
+  })
 }

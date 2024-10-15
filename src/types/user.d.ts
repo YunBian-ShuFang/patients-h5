@@ -65,10 +65,10 @@ export type Patient = {
   // 性别 1男 0女
   gender: number
   // 性别值
-  genderValue: string
+  genderValue?: string
   // 年龄
-  age: number
-  id: string
+  age?: number
+  id?: string
 }
 
 // 家庭档案 -- 患者信息列表
