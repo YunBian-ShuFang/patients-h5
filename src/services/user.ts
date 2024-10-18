@@ -49,3 +49,20 @@ export const addPatient = (patient: Patient) => {
     data: patient
   })
 }
+
+// 家庭患者 -- 编辑患者
+export const editPatient = (patient: Patient) => {
+  return instance({
+    url: '/patient/update',
+    method: 'put',
+    data: patient
+  })
+}
+
+// 家庭患者 -- 删除患者信息
+export const delPatient = (id: string) => {
+  return instance({
+    url: `/patient/del/${id}`,
+    method: 'delete'
+  })
+}

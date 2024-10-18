@@ -34,7 +34,9 @@ instance.interceptors.response.use(
     return res.data
   },
   (err) => {
-    if (err.response.status === 401) {
+    console.log('err', err)
+
+    if (err.response?.status === 401) {
       // 删除用户信息
       const store = useUserStore()
       store.delUser()
