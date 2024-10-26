@@ -1,5 +1,5 @@
-import { followOrUnfollow } from '@/services/consult'
-import type { FollowType } from '@/types/consult'
+import { followOrUnfollow } from '@/services/home'
+import type { FollowType } from '@/types/home'
 import { ref } from 'vue'
 
 /* 关注功能封装 */

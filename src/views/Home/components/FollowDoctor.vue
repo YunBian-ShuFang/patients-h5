@@ -2,8 +2,8 @@
 import { onMounted, ref } from 'vue'
 import DoctorCard from './DoctorCard.vue'
 import { useWindowSize } from '@vueuse/core'
-import type { DoctorList } from '@/types/consult'
-import { getDoctorPage } from '@/services/consult'
+import type { DoctorList } from '@/types/home'
+import { getDoctorPage } from '@/services/home'
 
 // 响应式的页面宽度
 const { width } = useWindowSize()

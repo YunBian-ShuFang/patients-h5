@@ -5,8 +5,8 @@ import type {
   KnowledgeParams,
   KnowledgeType,
   KnowledgeList
-} from '@/types/consult'
-import { getKnowledgePage } from '@/services/consult'
+} from '@/types/home'
+import { getKnowledgePage } from '@/services/home'
 
 const props = defineProps<{
   type: KnowledgeType
