@@ -18,12 +18,12 @@ export const useConsultStore = defineStore(
     const setIllness = (
       illness: Pick<
         PartialConsult,
-        'illnessDesc' | 'illnessTime' | 'illnessType' | 'pictures'
+        'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
       >
     ) => {
       consult.value.illnessDesc = illness.illnessDesc
       consult.value.illnessTime = illness.illnessTime
-      consult.value.illnessType = illness.illnessType
+      consult.value.consultFlag = illness.consultFlag
       consult.value.pictures = illness.pictures
     }
     // 设置患者

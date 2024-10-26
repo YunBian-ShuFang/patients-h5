@@ -83,7 +83,8 @@ onMounted(async () => {
   if (store.consult.illnessDesc) {
     await showConfirmDialog({
       title: '温馨提示!',
-      message: '是否恢复您之前填写的病情信息呢？'
+      message: '是否恢复您之前填写的病情信息呢？',
+      closeOnPopstate: false // 防止在浏览器历史记录变化时自动关闭对话框（需确认支持）
     }).then(() => {
       // 确认
       const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult

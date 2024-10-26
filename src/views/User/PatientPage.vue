@@ -1,14 +1,22 @@
 <script setup lang="ts">
+import router from '@/router'
 import {
   addPatient,
   delPatient,
   editPatient,
   getPatientList
 } from '@/services/user'
+import { useConsultStore } from '@/stores'
 import type { Patient, PatientList } from '@/types/user'
 import { idCardRules, nameRules } from '@/utils/rules'
-import { showConfirmDialog, showSuccessToast, type FormInstance } from 'vant'
+import {
+  showConfirmDialog,
+  showSuccessToast,
+  showToast,
+  type FormInstance
+} from 'vant'
 import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 // 打开侧滑栏
 const show = ref(false)
@@ -88,18 +96,60 @@ const loadList = async () => {
   const res = await getPatientList()
   console.log(res)
   list.value = res.data
+  // 设置默认选中的ID，当你是选择患者的时候，且有患者的时候
+  if (isChange.value && list.value.length) {
+    const defPatient = list.value.find((item) => item.defaultFlag === 1)
+    if (defPatient) patientId.value = defPatient.id
+    else patientId.value = list.value[0].id
+  }
 }
 
 onMounted(async () => {
   loadList()
 })
+
+/* 
+  问诊跳入时的可选患者功能
+  带上isChange参数，可判断是否可选患者
+*/
+const route = useRoute()
+const isChange = computed(() => route.query.isChange === '1')
+
+// 选择患者-点击选中效果
+const patientId = ref<string>()
+const selectedPatient = (item: Patient) => {
+  if (isChange.value) {
+    patientId.value = item.id
+  }
+}
+
+// 选择患者-下一步
+const next = async () => {
+  if (!patientId.value) return showToast('请选择就诊患者')
+  // 将患者信息存入pinia
+  const store = useConsultStore()
+  store.setPatient(patientId.value)
+  // 跳转页面
+  router.push('/consult/pay')
+}
 </script>
 
 <template>
   <div class="patient-page">
-    <cp-nav-bar title="家庭档案"></cp-nav-bar>
+    <cp-nav-bar :title="isChange ? '选择患者' : '家庭档案'" />
+    <!-- 头部提示 -->
+    <div class="patient-change" v-if="isChange">
+      <h3>请选择患者信息</h3>
+      <p>以便医生给出更准确的治疗，信息仅医生可见</p>
+    </div>
     <div class="patient-list">
-      <div class="patient-item" v-for="item in list" :key="item.id">
+      <div
+        class="patient-item"
+        v-for="item in list"
+        :key="item.id"
+        @click="selectedPatient(item)"
+        :class="{ selected: patientId === item.id }"
+      >
         <div class="info">
           <span class="name">{{ item.name }}</span>
           <span class="id">
@@ -118,6 +168,10 @@ onMounted(async () => {
         <p>添加患者</p>
       </div>
       <div class="patient-tip">最多可添加6人</div>
+      <!-- 底部按钮 -->
+      <div class="patient-next" v-if="isChange">
+        <van-button type="primary" round block @click="next">下一步</van-button>
+      </div>
     </div>
     <!-- 测边栏 -->
     <van-popup v-model:show="show" position="right">
@@ -260,6 +314,26 @@ onMounted(async () => {
         }
       }
     }
+  }
+  .patient-change {
+    padding: 15px;
+    > h3 {
+      font-weight: normal;
+      margin-bottom: 5px;
+    }
+    > p {
+      color: var(--cp-text3);
+    }
+  }
+  .patient-next {
+    padding: 15px;
+    background-color: #fff;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    box-sizing: border-box;
   }
 }
 </style>

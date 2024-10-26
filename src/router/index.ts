@@ -49,7 +49,7 @@ const router = createRouter({
     },
     // 家庭档案
     {
-      path: '/patient',
+      path: '/user/patient',
       component: () => import('@/views/User/PatientPage.vue'),
       meta: { title: '家庭档案' }
     },
