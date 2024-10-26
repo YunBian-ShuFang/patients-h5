@@ -47,10 +47,22 @@ const router = createRouter({
         }
       ]
     },
+    // 家庭档案
     {
       path: '/patient',
       component: () => import('@/views/User/PatientPage.vue'),
       meta: { title: '家庭档案' }
+    },
+    // 选择极速问诊后跳转的选医院页面
+    {
+      path: '/consult/fast',
+      component: () => import('@/views/Consult/ConsultFast.vue'),
+      meta: { title: '极速问诊' }
+    },
+    {
+      path: '/consult/dep',
+      component: () => import('@/views/Consult/ConsultDep.vue'),
+      meta: { title: '选择科室' }
     },
     {
       path: '/login',
