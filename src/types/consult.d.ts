@@ -47,3 +47,9 @@ export type TopDep = SubDep & {
   /* 二级科室数组 */
   child: SubDep[]
 }
+
+// 从可选问诊单中挑选出表单页面需要的四个类型，如果去多个，用联合类型
+export type ConsultIllness = Pick<
+  PartialConsult,
+  'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
+>

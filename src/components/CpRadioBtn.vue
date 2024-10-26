@@ -34,12 +34,12 @@ const toggleItem = (value: string | number) => {
 
 <style lang="scss" scoped>
 .cp-radio-btn {
-  display: block;
+  display: flex;
   flex-wrap: wrap;
   .item {
-    height: 32px;
+    height: 35px;
     min-width: 60px;
-    line-height: 30px;
+    line-height: 35px;
     padding: 0 14px;
     margin-right: 10px;
     margin-bottom: 10px;
