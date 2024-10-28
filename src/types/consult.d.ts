@@ -53,3 +53,20 @@ export type ConsultIllness = Pick<
   PartialConsult,
   'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'
 >
+
+// 问诊订单预支付传参
+export type ConsultOrderPreParams = Pick<PartialConsult, 'type' | 'illnessType'>
+
+// 问诊订单预支付信息
+export type ConsultOrderPreData = {
+  /* 积分抵扣 */
+  pointDeduction: number
+  /* 优惠券抵扣 */
+  couponDeduction: number
+  /* 优惠券id */
+  couponId: string
+  /* 应付金额 */
+  payment: number
+  /* 实付金额 */
+  actualPayment: number
+}

@@ -66,3 +66,11 @@ export const delPatient = (id: string) => {
     method: 'delete'
   })
 }
+
+// 查询患者详情
+export const getPatientDetail = (id: string) => {
+  return instance({
+    url: `/patient/info/${id}`,
+    method: 'get'
+  })
+}
