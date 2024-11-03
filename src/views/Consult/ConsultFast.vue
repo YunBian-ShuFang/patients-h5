@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { useConsultStore } from '@/stores'
+import { useRouter } from 'vue-router'
 
 const store = useConsultStore()
+
+// 跳转问诊记录
+const router = useRouter()
+const toConsult = () => {
+  router.push('/user/consult')
+}
 </script>
 
 <template>
   <div class="consult-fast-page">
-    <cp-nav-bar title="极速问诊" right-text="问诊记录"></cp-nav-bar>
+    <cp-nav-bar
+      title="极速问诊"
+      right-text="问诊记录"
+      @click-right="toConsult"
+    ></cp-nav-bar>
     <div class="fast-logo">
       <img class="img" src="@/assets/consult-fast.png" alt="" />
       <p class="text"><span>20s</span> 快速匹配专业医生</p>
