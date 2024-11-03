@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFollow } from '@/composable'
-import type { Doctor } from '@/types/consult'
+import type { Doctor } from '@/types/home'
 
 defineProps<{ item: Doctor }>()
 

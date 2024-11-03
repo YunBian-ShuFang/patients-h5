@@ -58,3 +58,12 @@ export const getOrderDetailAPI = (orderID: string) => {
     params: { orderID }
   })
 }
+
+// 问诊记录--订单列表-找医生、极速问诊、开药问诊
+export const getConsultOrderList = (params: ConsultOrderPreParams) => {
+  return instance({
+    url: '/patient/consult/order/list',
+    method: 'get',
+    params
+  })
+}

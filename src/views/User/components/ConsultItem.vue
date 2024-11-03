@@ -1,29 +1,42 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { OrderType } from '@/enums'
+import type { ConsultOrderItem } from '@/types/consult'
+
+defineProps<{ item: ConsultOrderItem }>()
+</script>
 
 <template>
   <div class="consult-item">
     <div class="head van-hairline--bottom">
       <img class="img" src="@/assets/icons/avatar-doctor.svg" alt="" />
-      <p>极速问诊(自动分配医生)</p>
-      <span>待支付</span>
+      <p>{{ item.docInfo?.name || '暂未分配医生' }}</p>
+      <span
+        :class="{
+          orange: item.status === OrderType.ConsultPay,
+          green: item.status === OrderType.ConsultChat
+        }"
+        >{{ item.statusValue }}</span
+      >
     </div>
     <div class="body">
       <div class="body-row">
         <div class="body-label">病情描述</div>
-        <div class="body-value">完啦</div>
+        <div class="body-value">{{ item.illnessDesc }}</div>
       </div>
       <div class="body-row">
         <div class="body-label">价格</div>
-        <div class="body-value">¥ 39.00</div>
+        <div class="body-value">¥ {{ item.payment.toFixed(2) }}</div>
       </div>
       <div class="body-row">
         <div class="body-label">创建时间</div>
-        <div class="body-value">2024-11-01 17:39:09</div>
+        <div class="body-value">{{ item.createTime }}</div>
       </div>
     </div>
     <div class="foot">
       <van-button class="gray" plain size="small" round>取消问诊</van-button>
-      <van-button type="primary" plain size="small" round>去支付</van-button>
+      <van-button type="primary" plain size="small" round to="/">
+        去支付
+      </van-button>
     </div>
   </div>
 </template>

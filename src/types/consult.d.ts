@@ -1,6 +1,6 @@
 import type { ConsultType, IllnessTime, OrderType } from '@/enums'
 import type { Patient } from './user'
-import type { Doctor } from './home'
+import type { Doctor, PageParams } from './home'
 
 // 图片列表
 export type Image = {
@@ -103,4 +103,18 @@ export type ConsultOrderItem = Consult & {
   pointDeduction: number
   /** 实付款 */
   actualPayment: number
+}
+
+// --------问诊记录
+// 问诊记录接口参数类型
+export type ConsultOrderDetailParams = PageParams & {
+  /* 问诊记录类型 */
+  type: ConsultType
+}
+
+// 带分页问诊订单类型
+export type ConsultOrderPage = {
+  pageTotal: number
+  total: number
+  rows: ConsultOrderItem[]
 }
