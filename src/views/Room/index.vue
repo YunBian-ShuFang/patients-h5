@@ -10,7 +10,9 @@ import { io, type Socket } from 'socket.io-client'
 import { onMounted, onUnmounted, ref } from 'vue'
 import { baseURL } from '@/utils/request'
 import type { Message, TimeMessage } from '@/types/room'
-import { MsgType } from '@/enums'
+import { MsgType, OrderType } from '@/enums'
+import type { ConsultOrderItem } from '@/types/consult'
+import { getOrderDetailAPI } from '@/services/consult'
 const store = useUserStore()
 const route = useRoute()
 
@@ -95,14 +97,22 @@ onMounted(async () => {
     // list.value.unshift(...arr)
   })
 })
+
+// 订单状态
+const consult = ref<ConsultOrderItem>()
+onMounted(async () => {
+  const res = await getOrderDetailAPI(route.query.orderID as string)
+  console.log('订单状态', res)
+  consult.value = res.data
+})
 </script>
 
 <template>
   <div class="room-page">
     <cp-nav-bar title="医生问诊室" />
-    <room-status />
+    <room-status :status="consult?.status" :countdown="consult?.countdown" />
     <room-message :list="list" />
-    <room-action />
+    <room-action :disabled="consult?.status !== OrderType.ConsultChat" />
   </div>
 </template>
 

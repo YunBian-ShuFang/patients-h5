@@ -67,7 +67,7 @@ const router = createRouter({
     {
       path: '/consult/illness',
       component: () => import('@/views/Consult/ConsultIllness.vue'),
-      meta: { title: '图文问诊' }
+      meta: { title: '病情描述' }
     },
     {
       path: '/consult/pay',
@@ -114,7 +114,7 @@ router.beforeEach((to) => {
 // 后置守卫
 router.afterEach((to) => {
   // 页面标题
-  document.title = `${to.meta.title || ''}-优医问诊`
+  document.title = `优医问诊-${to.meta.title || ''}`
   // 进度条关闭
   NProgress.done()
 })

@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+defineProps<{
+  disabled: boolean
+}>()
+</script>
 
 <template>
   <div class="room-action">
@@ -8,9 +12,10 @@
       :border="false"
       placeholder="问医生"
       autocomplete="off"
-      :disabled="true"
+      :disabled="disabled"
     ></van-field>
-    <van-uploader :preview-image="false" :disabled="true">
+    <!-- 不预览，使用小图标作为上传按钮 -->
+    <van-uploader :preview-image="false" :disabled="disabled">
       <cp-icon name="consult-img" />
     </van-uploader>
   </div>
