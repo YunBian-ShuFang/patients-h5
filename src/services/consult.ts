@@ -83,3 +83,8 @@ export const delOrderAPI = (id: string) => {
     method: 'delete'
   })
 }
+
+// 查看处方
+export const getPrescriptionPicAPI = (id: string) => {
+  return instance(`/patient/consult/prescription/${id}`)
+}

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useShowPrescription } from '@/composable'
 import { OrderType } from '@/enums'
 import { cancelOrder, delOrderAPI } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
@@ -14,8 +15,12 @@ const actions = computed(() => [
   { text: '删除订单' }
 ])
 const onSelect = (action: { text: string }, i: number) => {
+  // 查看处方
+  if (i === 0) {
+    onShowPrescription(props.item.prescriptionId)
+  }
+  // 删除
   if (i === 1) {
-    // 删除
     delConsultOrder(props.item)
   }
 }
@@ -51,6 +56,9 @@ const delConsultOrder = async (item: ConsultOrderItem) => {
     delLoading.value = false
   }
 }
+
+// 查看处方
+const { onShowPrescription } = useShowPrescription()
 </script>
 
 <template>
@@ -121,6 +129,7 @@ const delConsultOrder = async (item: ConsultOrderItem) => {
         plain
         size="small"
         round
+        @click="onShowPrescription(item.prescriptionId)"
       >
         查看处方</van-button
       >
