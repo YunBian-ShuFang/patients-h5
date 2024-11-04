@@ -67,3 +67,11 @@ export const getConsultOrderList = (params: ConsultOrderPreParams) => {
     params
   })
 }
+
+// 取消订单
+export const cancelOrder = (id: string) => {
+  return instance({
+    url: `/patient/order/cancel/${id}`,
+    method: 'put'
+  })
+}
