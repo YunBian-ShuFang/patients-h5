@@ -75,3 +75,11 @@ export const cancelOrder = (id: string) => {
     method: 'put'
   })
 }
+
+// 删除订单
+export const delOrderAPI = (id: string) => {
+  return instance({
+    url: `/patient/order/${id}`,
+    method: 'delete'
+  })
+}
