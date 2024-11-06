@@ -88,6 +88,11 @@ const router = createRouter({
       meta: { title: '问诊记录' }
     },
     {
+      path: '/user/consult/detail',
+      component: () => import('@/views/User/ConsultDetail.vue'),
+      meta: { title: '问诊详情' }
+    },
+    {
       path: '/login',
       component: () => import('@/views/Login/index.vue'),
       meta: { title: '登陆' }
