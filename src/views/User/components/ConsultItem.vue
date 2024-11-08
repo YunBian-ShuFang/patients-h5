@@ -4,26 +4,28 @@ import { OrderType } from '@/enums'
 import { cancelOrder, delOrderAPI } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
 import { showFailToast, showSuccessToast } from 'vant'
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import ConsultMore from './ConsultMore.vue'
 
 const props = defineProps<{ item: ConsultOrderItem }>()
 
 // 列表操作按钮
-const showPopover = ref(false)
-const actions = computed(() => [
-  { text: '查看处方', disabled: !props.item.prescriptionId },
-  { text: '删除订单' }
-])
-const onSelect = (action: { text: string }, i: number) => {
-  // 查看处方
-  if (i === 0) {
-    onShowPrescription(props.item.prescriptionId)
-  }
-  // 删除
-  if (i === 1) {
-    delConsultOrder(props.item)
-  }
-}
+// const showPopover = ref(false)
+// const actions = computed(() => [
+//   { text: '查看处方', disabled: !props.item.prescriptionId },
+//   { text: '删除订单' }
+// ])
+// const onSelect = (action: { text: string }, i: number) => {
+//   // 查看处方
+//   if (i === 0) {
+//     onShowPrescription(props.item.prescriptionId)
+//   }
+//   // 删除
+//   if (i === 1) {
+//     delConsultOrder(props.item)
+//   }
+// }
 
 // 取消订单
 const loading = ref(false)
@@ -59,6 +61,12 @@ const delConsultOrder = async (item: ConsultOrderItem) => {
 
 // 查看处方
 const { onShowPrescription } = useShowPrescription()
+
+// 跳转问诊详情
+const router = useRouter()
+const toDetail = (id: string) => {
+  router.push(`/user/consult/${id}`)
+}
 </script>
 
 <template>
@@ -74,7 +82,7 @@ const { onShowPrescription } = useShowPrescription()
         >{{ item.statusValue }}</span
       >
     </div>
-    <div class="body">
+    <div class="body" @click="toDetail(item.id)">
       <div class="body-row">
         <div class="body-label">病情描述</div>
         <div class="body-value">{{ item.illnessDesc }}</div>
@@ -144,7 +152,12 @@ const { onShowPrescription } = useShowPrescription()
       </van-button>
     </div>
     <div class="foot" v-if="item.status === OrderType.ConsultComplete">
-      <div class="more">
+      <consult-more
+        :disabled="!props.item.prescriptionId"
+        @on-delete="delConsultOrder(item)"
+        @on-preview="onShowPrescription(item.prescriptionId)"
+      ></consult-more>
+      <!-- <div class="more">
         <van-popover
           placement="top-start"
           v-model:show="showPopover"
@@ -153,7 +166,7 @@ const { onShowPrescription } = useShowPrescription()
         >
           <template #reference>更多</template>
         </van-popover>
-      </div>
+      </div> -->
       <van-button
         class="gray"
         plain
