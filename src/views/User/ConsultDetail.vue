@@ -1,13 +1,34 @@
 <!-- 问诊详情 -->
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { OrderType } from '@/enums'
+import { getOrderDetailAPI } from '@/services/consult'
+import type { ConsultOrderItem } from '@/types/consult'
+import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
+import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const item = ref<ConsultOrderItem>()
+onMounted(async () => {
+  const res = await getOrderDetailAPI(route.params.id as string)
+  item.value = res.data
+})
+</script>
 
 <template>
-  <div class="consult-detail-page">
+  <div class="consult-detail-page" v-if="item">
     <cp-nav-bar title="问诊详情" />
     <div class="detail-head">
       <div class="text">
-        <h3>图文问诊 39 元</h3>
-        <span class="status green">待支付</span>
+        <h3>图文问诊 {{ item.payment }} 元</h3>
+        <span
+          class="status"
+          :class="{
+            orange: item.status === OrderType.ConsultPay,
+            green: item.status === OrderType.ConsultChat
+          }"
+          >{{ item.statusValue }}</span
+        >
         <p class="tip">服务医生信息</p>
       </div>
       <div class="card">
@@ -21,10 +42,19 @@
     </div>
     <div class="detail-patient">
       <van-cell-group :border="false">
-        <van-cell title="患者信息" value="李富贵 | 男 | 30岁" />
-        <van-cell title="患病时长" value="一周内" />
-        <van-cell title="就诊情况" value="未就诊过" />
-        <van-cell title="病情描述" label="头痛，头晕，恶心" />
+        <van-cell
+          title="患者信息"
+          :value="`${item.patientInfo.name} | ${item.patientInfo.genderValue} | ${item.patientInfo.age}岁`"
+        />
+        <van-cell
+          title="患病时长"
+          :value="getIllnessTimeText(item.illnessTime)"
+        />
+        <van-cell
+          title="就诊情况"
+          :value="getConsultFlagText(item.consultFlag)"
+        />
+        <van-cell title="病情描述" :label="item.illnessDesc" />
       </van-cell-group>
     </div>
     <div class="detail-order">
@@ -33,27 +63,79 @@
         <van-cell title="订单编号">
           <template #value>
             <span class="copy">复制</span>
-            220241106115032026101
+            {{ item.orderNo }}
           </template>
         </van-cell>
-        <van-cell title="创建时间" value="2024-11-06 11:50:32" />
-        <van-cell title="应付款" value="￥39.00" />
-        <van-cell title="优惠券" value="-￥0" />
-        <van-cell title="积分抵扣" value="-￥0" />
-        <van-cell title="实付款" value="￥39.00" class="price" />
+        <van-cell title="创建时间" :value="item.createTime" />
+        <van-cell title="应付款" :value="`￥${item.payment}`" />
+        <van-cell title="优惠券" :value="`-￥${item.couponDeduction}`" />
+        <van-cell title="积分抵扣" :value="`-￥${item.pointDeduction}`" />
+        <van-cell
+          title="实付款"
+          :value="`￥${item.actualPayment}`"
+          class="price"
+        />
       </van-cell-group>
     </div>
-    <div class="detail-time">
-      请在 <van-count-down :time="10000 * 1000" /> 内完成支付，超时订单将取消
+    <div class="detail-time" v-if="item.status === OrderType.ConsultPay">
+      请在
+      <van-count-down :time="item.countdown * 1000" />
+      内完成支付，超时订单将取消
     </div>
-    <div class="detail-foot van-hairline--top">
+    <div
+      class="detail-foot van-hairline--top"
+      v-if="item.status === OrderType.ConsultPay"
+    >
       <div class="price">
         <span>需付款</span>
-        <span>￥39.00</span>
+        <span>￥{{ item.actualPayment }}</span>
       </div>
       <van-button type="default" round>取消问诊</van-button>
-      <van-button type="primary" round>继续支付</van-button>
+      <van-button type="primary" round>去支付</van-button>
     </div>
+    <div
+      class="detail-foot van-hairline--top"
+      v-if="item.status === OrderType.ConsultWait"
+    >
+      <van-button type="default" round>取消问诊</van-button>
+      <van-button type="primary" round>继续沟通</van-button>
+    </div>
+    <div
+      class="detail-foot van-hairline--top"
+      v-if="item.status === OrderType.ConsultChat"
+    >
+      <van-button type="default" round v-if="item.prescriptionId">
+        查看处方
+      </van-button>
+      <van-button type="primary" round :to="`/room?order=${item.id}`">
+        继续沟通
+      </van-button>
+    </div>
+    <div
+      class="detail-foot van-hairline--top"
+      v-if="item.status === OrderType.ConsultComplete"
+    >
+      <consult-more></consult-more>
+      <van-button type="default" round :to="`/room?orderId=${item.id}`">
+        问诊记录
+      </van-button>
+      <van-button type="primary" round v-if="item.evaluateId">
+        查看评价
+      </van-button>
+      <van-button type="primary" round v-else>写评价</van-button>
+    </div>
+    <div
+      class="detail-foot van-hairline--top"
+      v-if="item.status === OrderType.ConsultCancel"
+    >
+      <van-button type="default" round>删除订单</van-button>
+      <van-button type="primary" round to="/">咨询其他医生</van-button>
+    </div>
+  </div>
+  <div class="consult-detail-page" v-else>
+    <cp-nav-bar title="问诊详情" />
+    <van-skeleton title :row="4" style="margin-top: 30px" />
+    <van-skeleton title :row="4" style="margin-top: 30px" />
   </div>
 </template>
 

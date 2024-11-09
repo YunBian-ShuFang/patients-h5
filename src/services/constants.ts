@@ -9,5 +9,5 @@ export const timeOptions = [
 
 export const flagOptions = [
   { label: '就诊过', value: 0 },
-  { label: '没就诊过', value: 0 }
+  { label: '没就诊过', value: 1 }
 ]

@@ -51,11 +51,11 @@ export const getConsultOrderPayUrl = (data: PayUrlParams) => {
 }
 
 // 获取订单详情
-export const getOrderDetailAPI = (orderID: string) => {
+export const getOrderDetailAPI = (orderId: string) => {
   return instance({
     url: '/patient/consult/order/detail',
     method: 'get',
-    params: { orderID }
+    params: { orderId }
   })
 }
 
