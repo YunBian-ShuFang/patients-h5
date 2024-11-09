@@ -1,7 +1,9 @@
-import { getPrescriptionPicAPI } from '@/services/consult'
+import { OrderType } from '@/enums'
+import { cancelOrder, getPrescriptionPicAPI } from '@/services/consult'
 import { followOrUnfollow } from '@/services/home'
+import type { ConsultOrderItem } from '@/types/consult'
 import type { FollowType } from '@/types/home'
-import { showImagePreview } from 'vant'
+import { showFailToast, showImagePreview, showSuccessToast } from 'vant'
 import { ref } from 'vue'
 
 /* 关注功能封装 */
@@ -28,4 +30,23 @@ export const useShowPrescription = () => {
     }
   }
   return { onShowPrescription }
+}
+
+/* 取消问诊订单逻辑封装 */
+export const useCancelOrder = () => {
+  const loading = ref(false)
+  const cancelConsultOrder = async (item: ConsultOrderItem) => {
+    try {
+      loading.value = true
+      await cancelOrder(item.id)
+      item.status = OrderType.ConsultCancel
+      item.statusValue = '已取消'
+      showSuccessToast('取消成功')
+    } catch (err) {
+      showFailToast('取消失败')
+    } finally {
+      loading.value = false
+    }
+  }
+  return { loading, cancelConsultOrder }
 }

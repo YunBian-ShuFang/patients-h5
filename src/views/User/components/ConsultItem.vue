@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import { useShowPrescription } from '@/composable'
 import { OrderType } from '@/enums'
-import { cancelOrder, delOrderAPI } from '@/services/consult'
+import { delOrderAPI } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
 import { showFailToast, showSuccessToast } from 'vant'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ConsultMore from './ConsultMore.vue'
+
+// 取消问诊订单逻辑
+import { useCancelOrder } from '@/composable'
+const { loading, cancelConsultOrder } = useCancelOrder()
 
 const props = defineProps<{ item: ConsultOrderItem }>()
 
@@ -28,20 +32,20 @@ const props = defineProps<{ item: ConsultOrderItem }>()
 // }
 
 // 取消订单
-const loading = ref(false)
-const cancelConsultOrder = async (item: ConsultOrderItem) => {
-  loading.value = true
-  try {
-    await cancelOrder(item.id)
-    item.status = OrderType.ConsultCancel
-    item.statusValue = '已取消'
-    showSuccessToast('取消成功')
-  } catch (err) {
-    showFailToast('取消失败')
-  } finally {
-    loading.value = false
-  }
-}
+// const loading = ref(false)
+// const cancelConsultOrder = async (item: ConsultOrderItem) => {
+//   loading.value = true
+//   try {
+//     await cancelOrder(item.id)
+//     item.status = OrderType.ConsultCancel
+//     item.statusValue = '已取消'
+//     showSuccessToast('取消成功')
+//   } catch (err) {
+//     showFailToast('取消失败')
+//   } finally {
+//     loading.value = false
+//   }
+// }
 
 const emit = defineEmits<{ (e: 'on-delete', id: string): void }>()
 // 删除订单

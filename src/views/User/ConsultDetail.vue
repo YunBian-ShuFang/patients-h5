@@ -6,7 +6,11 @@ import type { ConsultOrderItem } from '@/types/consult'
 import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+// 取消问诊订单逻辑
+import { useCancelOrder } from '@/composable'
+const { loading, cancelConsultOrder } = useCancelOrder()
 
+// 获取详情数据
 const route = useRoute()
 const item = ref<ConsultOrderItem>()
 onMounted(async () => {
@@ -90,14 +94,28 @@ onMounted(async () => {
         <span>需付款</span>
         <span>￥{{ item.actualPayment }}</span>
       </div>
-      <van-button type="default" round>取消问诊</van-button>
+      <van-button
+        type="default"
+        round
+        :loading="loading"
+        @click="cancelConsultOrder(item)"
+      >
+        取消问诊
+      </van-button>
       <van-button type="primary" round>去支付</van-button>
     </div>
     <div
       class="detail-foot van-hairline--top"
       v-if="item.status === OrderType.ConsultWait"
     >
-      <van-button type="default" round>取消问诊</van-button>
+      <van-button
+        type="default"
+        round
+        :loading="loading"
+        @click="cancelConsultOrder(item)"
+      >
+        取消问诊
+      </van-button>
       <van-button type="primary" round>继续沟通</van-button>
     </div>
     <div
