@@ -1,5 +1,9 @@
 import { OrderType } from '@/enums'
-import { cancelOrder, getPrescriptionPicAPI } from '@/services/consult'
+import {
+  cancelOrder,
+  delOrderAPI,
+  getPrescriptionPicAPI
+} from '@/services/consult'
 import { followOrUnfollow } from '@/services/home'
 import type { ConsultOrderItem } from '@/types/consult'
 import type { FollowType } from '@/types/home'
@@ -23,13 +27,13 @@ export const useFollow = (type: FollowType = 'doc') => {
 
 /* 查看处方功能封装 */
 export const useShowPrescription = () => {
-  const onShowPrescription = async (id?: string) => {
-    if (id) {
-      const res = await getPrescriptionPicAPI(id)
+  const showPrescription = async (item: ConsultOrderItem) => {
+    if (item.prescriptionId) {
+      const res = await getPrescriptionPicAPI(item.prescriptionId)
       showImagePreview([res.data.url])
     }
   }
-  return { onShowPrescription }
+  return { showPrescription }
 }
 
 /* 取消问诊订单逻辑封装 */
@@ -49,4 +53,22 @@ export const useCancelOrder = () => {
     }
   }
   return { loading, cancelConsultOrder }
+}
+
+/* 删除问诊订单逻辑封装 */
+export const useDeleteOrder = (cb: () => void) => {
+  const loading = ref(false)
+  const delConsultOrder = async (item: ConsultOrderItem) => {
+    try {
+      loading.value = true
+      await delOrderAPI(item.id)
+      showSuccessToast('删除成功')
+      cb && cb()
+    } catch (err) {
+      showFailToast('删除失败')
+    } finally {
+      loading.value = false
+    }
+  }
+  return { loading, delConsultOrder }
 }

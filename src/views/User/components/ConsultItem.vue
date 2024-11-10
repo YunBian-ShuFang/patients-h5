@@ -1,16 +1,24 @@
 <script setup lang="ts">
-import { useShowPrescription } from '@/composable'
+import {
+  useCancelOrder,
+  useDeleteOrder,
+  useShowPrescription
+} from '@/composable'
 import { OrderType } from '@/enums'
-import { delOrderAPI } from '@/services/consult'
 import type { ConsultOrderItem } from '@/types/consult'
-import { showFailToast, showSuccessToast } from 'vant'
-import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import ConsultMore from './ConsultMore.vue'
 
 // 取消问诊订单逻辑
-import { useCancelOrder } from '@/composable'
 const { loading, cancelConsultOrder } = useCancelOrder()
+
+// 删除问诊订单逻辑
+const { loading: delLoading, delConsultOrder } = useDeleteOrder(() => {
+  emit('on-delete', props.item.id)
+})
+
+// 查看处方
+const { showPrescription } = useShowPrescription()
 
 const props = defineProps<{ item: ConsultOrderItem }>()
 
@@ -49,22 +57,19 @@ const props = defineProps<{ item: ConsultOrderItem }>()
 
 const emit = defineEmits<{ (e: 'on-delete', id: string): void }>()
 // 删除订单
-const delLoading = ref(false)
-const delConsultOrder = async (item: ConsultOrderItem) => {
-  delLoading.value = true
-  try {
-    await delOrderAPI(item.id)
-    showSuccessToast('删除成功')
-    emit('on-delete', item.id)
-  } catch (err) {
-    showFailToast('删除失败')
-  } finally {
-    delLoading.value = false
-  }
-}
-
-// 查看处方
-const { onShowPrescription } = useShowPrescription()
+// const delLoading = ref(false)
+// const delConsultOrder = async (item: ConsultOrderItem) => {
+//   delLoading.value = true
+//   try {
+//     await delOrderAPI(item.id)
+//     showSuccessToast('删除成功')
+//     emit('on-delete', item.id)
+//   } catch (err) {
+//     showFailToast('删除失败')
+//   } finally {
+//     delLoading.value = false
+//   }
+// }
 
 // 跳转问诊详情
 const router = useRouter()
@@ -141,7 +146,7 @@ const toDetail = (id: string) => {
         plain
         size="small"
         round
-        @click="onShowPrescription(item.prescriptionId)"
+        @click="showPrescription(item)"
       >
         查看处方</van-button
       >
@@ -159,7 +164,7 @@ const toDetail = (id: string) => {
       <consult-more
         :disabled="!props.item.prescriptionId"
         @on-delete="delConsultOrder(item)"
-        @on-preview="onShowPrescription(item.prescriptionId)"
+        @on-preview="showPrescription(item)"
       ></consult-more>
       <!-- <div class="more">
         <van-popover
@@ -189,7 +194,9 @@ const toDetail = (id: string) => {
       >
         去评价
       </van-button>
-      <van-button class="gray" plain size="small" round>查看评价</van-button>
+      <van-button class="gray" plain size="small" round v-else>
+        查看评价
+      </van-button>
     </div>
     <div class="foot" v-if="item.status === OrderType.ConsultCancel">
       <van-button
@@ -198,7 +205,7 @@ const toDetail = (id: string) => {
         size="small"
         round
         :loading="delLoading"
-        @click="delConsultOrder(item)"
+        @click="delConsultOrder(item!)"
         >删除订单</van-button
       >
       <van-button type="primary" plain size="small" round to="/">
