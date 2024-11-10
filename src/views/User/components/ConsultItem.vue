@@ -115,7 +115,13 @@ const toDetail = (id: string) => {
         @click="cancelConsultOrder(item)"
         >取消问诊</van-button
       >
-      <van-button type="primary" plain size="small" round to="/">
+      <van-button
+        type="primary"
+        plain
+        size="small"
+        round
+        :to="`/user/consult/${item.id}`"
+      >
         去支付
       </van-button>
     </div>

@@ -92,8 +92,6 @@ const agree = ref(false)
 const show = ref(false)
 // 加载状态
 const loading = ref(false)
-// 存储选择的支付方式 0 代表微信, 1 代表支付宝
-const paymentMethod = ref<0 | 1>()
 // 储存订单 ID
 const orderId = ref('')
 
@@ -130,37 +128,35 @@ onBeforeRouteLeave(() => {
 const router = useRouter()
 
 // 关闭支付时的确认对话框
-const onClose = () => {
-  return showConfirmDialog({
-    title: '关闭支付',
-    message: '取消支付将无法获得医生回复，医生接诊名额有限，是否确认关闭？',
-    cancelButtonText: '仍要关闭',
-    confirmButtonText: '继续支付'
-  })
-    .then(() => {
-      // 用户选择取消，返回 false，阻止关闭
-      return false
+const onClose = async (): Promise<boolean> => {
+  try {
+    await showConfirmDialog({
+      title: '关闭支付',
+      message: '取消支付将无法获得医生回复，医生接诊名额有限，是否确认关闭？',
+      cancelButtonText: '仍要关闭',
+      confirmButtonText: '继续支付'
     })
-    .catch(() => {
-      // 用户选择确认关闭，清空订单 ID 并跳转到咨询记录页面
-      orderId.value = ''
-      router.push('/user/consult')
-      return true // 返回 true，表示关闭成功
-    })
+    return false
+  } catch {
+    // 用户选择确认关闭，清空订单 ID 并跳转到咨询记录页面
+    orderId.value = ''
+    router.push('/user/consult')
+    return true // 返回 true，表示关闭成功
+  }
 }
 
 // 立即支付
-const payNow = async () => {
-  if (paymentMethod.value === undefined) return showToast('请选择支付方式')
-  showLoadingToast({ message: '跳转支付', duration: 0 })
-  const res = await getConsultOrderPayUrl({
-    paymentMethod: paymentMethod.value,
-    orderId: orderId.value,
-    payCallback: 'http://localhost:5173/room'
-  })
-  console.log('立即支付', res)
-  window.location.href = res.data.payUrl
-}
+// const payNow = async () => {
+//   if (paymentMethod.value === undefined) return showToast('请选择支付方式')
+//   showLoadingToast({ message: '跳转支付', duration: 0 })
+//   const res = await getConsultOrderPayUrl({
+//     paymentMethod: paymentMethod.value,
+//     orderId: orderId.value,
+//     payCallback: 'http://localhost:5173/room'
+//   })
+//   console.log('立即支付', res)
+//   window.location.href = res.data.payUrl
+// }
 </script>
 
 <template>
@@ -217,7 +213,13 @@ const payNow = async () => {
     ></van-submit-bar>
 
     <!-- 支付选项 -->
-    <van-action-sheet
+    <cp-pay-sheet
+      v-model:show="show"
+      :order-id="orderId"
+      :actual-payment="payInfo?.actualPayment ?? 0"
+      :onClose="onClose"
+    ></cp-pay-sheet>
+    <!-- <van-action-sheet
       v-model:show="show"
       title="选择支付"
       :close-on-popstate="false"
@@ -227,14 +229,12 @@ const payNow = async () => {
       <div class="pay-type">
         <p class="amount">￥{{ payInfo?.actualPayment.toFixed(2) }}</p>
         <van-cell-group>
-          <!-- 微信 -->
           <van-cell title="微信支付" @click="paymentMethod = 0">
             <template #icon><cp-icon name="consult-wechat"></cp-icon></template>
             <template #extra>
               <van-checkbox :checked="paymentMethod === 0" />
             </template>
           </van-cell>
-          <!-- 支付宝 -->
           <van-cell title="支付宝支付" @click="paymentMethod = 1">
             <template #icon><cp-icon name="consult-alipay"></cp-icon></template>
             <template #extra>
@@ -248,7 +248,7 @@ const payNow = async () => {
           </van-button>
         </div>
       </div>
-    </van-action-sheet>
+    </van-action-sheet> -->
   </div>
 </template>
 
@@ -315,25 +315,25 @@ const payNow = async () => {
     width: 160px;
   }
 }
-.pay-type {
-  .amount {
-    padding: 20px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  .btn {
-    padding: 15px;
-  }
-  .van-cell {
-    align-items: center;
-    .cp-icon {
-      margin-right: 10px;
-      font-size: 18px;
-    }
-    .van-checkbox :deep(.van-checkbox__icon) {
-      font-size: 16px;
-    }
-  }
-}
+// .pay-type {
+//   .amount {
+//     padding: 20px;
+//     text-align: center;
+//     font-size: 16px;
+//     font-weight: bold;
+//   }
+//   .btn {
+//     padding: 15px;
+//   }
+//   .van-cell {
+//     align-items: center;
+//     .cp-icon {
+//       margin-right: 10px;
+//       font-size: 18px;
+//     }
+//     .van-checkbox :deep(.van-checkbox__icon) {
+//       font-size: 16px;
+//     }
+//   }
+// }
 </style>

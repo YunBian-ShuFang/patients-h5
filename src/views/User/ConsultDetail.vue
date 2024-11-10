@@ -34,6 +34,9 @@ const onCopy = async () => {
   showToast('已复制')
 }
 
+// 支付弹窗状态
+const show = ref(false)
+
 // 获取详情数据
 const route = useRoute()
 const item = ref<ConsultOrderItem>()
@@ -126,7 +129,9 @@ onMounted(async () => {
       >
         取消问诊
       </van-button>
-      <van-button type="primary" round>去支付</van-button>
+      <van-button type="primary" round @click="show = true">
+        继续支付
+      </van-button>
     </div>
     <div
       class="detail-foot van-hairline--top"
@@ -191,6 +196,11 @@ onMounted(async () => {
       </van-button>
       <van-button type="primary" round to="/">咨询其他医生</van-button>
     </div>
+    <cp-pay-sheet
+      v-model:show="show"
+      :order-id="item.id"
+      :actual-payment="item.actualPayment"
+    ></cp-pay-sheet>
   </div>
   <div class="consult-detail-page" v-else>
     <cp-nav-bar title="问诊详情" />
