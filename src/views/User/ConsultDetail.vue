@@ -6,6 +6,7 @@ import type { ConsultOrderItem } from '@/types/consult'
 import { getConsultFlagText, getIllnessTimeText } from '@/utils/filter'
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useClipboard } from '@vueuse/core'
 // 更多-组件
 import ConsultMore from './components/ConsultMore.vue'
 // 取消问诊订单逻辑
@@ -14,6 +15,7 @@ import {
   useDeleteOrder,
   useShowPrescription
 } from '@/composable'
+import { showToast } from 'vant'
 const { loading, cancelConsultOrder } = useCancelOrder()
 
 // 删除问诊订单逻辑
@@ -23,6 +25,14 @@ const { loading: delLoading, delConsultOrder } = useDeleteOrder(() => {
 })
 // 查看处方
 const { showPrescription } = useShowPrescription()
+
+// 复制订单号
+const { copy, isSupported } = useClipboard()
+const onCopy = async () => {
+  if (!isSupported.value) return showToast('未授权，不支持')
+  await copy(item.value?.orderNo || '')
+  showToast('已复制')
+}
 
 // 获取详情数据
 const route = useRoute()
@@ -80,7 +90,7 @@ onMounted(async () => {
       <van-cell-group :border="false">
         <van-cell title="订单编号">
           <template #value>
-            <span class="copy">复制</span>
+            <span class="copy" @click="onCopy">复制</span>
             {{ item.orderNo }}
           </template>
         </van-cell>
