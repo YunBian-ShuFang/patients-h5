@@ -32,20 +32,20 @@ onMounted(async () => {
     }
   })
 
-  socket.on('connect', () => {
-    // 建立连接成功
-    console.log('connect')
-  })
+  // socket.on('connect', () => {
+  //   // 建立连接成功
+  //   console.log('connect')
+  // })
 
-  socket.on('error', () => {
-    // 错误异常消息
-    console.log('error')
-  })
+  // socket.on('error', () => {
+  //   // 错误异常消息
+  //   console.log('error')
+  // })
 
-  socket.on('disconnect', () => {
-    // 已经断开连接
-    console.log('disconnect')
-  })
+  // socket.on('disconnect', () => {
+  //   // 已经断开连接
+  //   console.log('disconnect')
+  // })
 })
 
 // 接收别人的消息
@@ -101,7 +101,7 @@ onMounted(async () => {
 // 订单状态
 const consult = ref<ConsultOrderItem>()
 onMounted(async () => {
-  const res = await getOrderDetailAPI(route.query.orderID as string)
+  const res = await getOrderDetailAPI(route.query.orderId as string)
   console.log('订单状态', res)
   consult.value = res.data
 })
@@ -123,6 +123,7 @@ onMounted(async () => {
   min-height: 100vh;
   box-sizing: border-box;
   background-color: var(--cp-bg);
+
   .van-pull-refresh {
     width: 100%;
     min-height: calc(100vh - 150px);
