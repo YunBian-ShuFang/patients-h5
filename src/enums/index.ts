@@ -24,7 +24,7 @@ export enum IllnessTime {
 // 消息类型
 export enum MsgType {
   /* 文字聊天 */
-  MsgType = 1,
+  MsgText = 1,
   /* 消息聊天 */
   MsgImage = 4,
   /* 患者信息 */

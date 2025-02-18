@@ -13,21 +13,21 @@ const { status, countdown = 0 } = defineProps<{
   countdown?: number
 }>()
 
-const consult = ref<ConsultOrderItem>()
+// const consult = ref<ConsultOrderItem>()
 
-var socket: Socket // 定义socket变量
+// var socket: Socket // 定义socket变量
 
-onMounted(async () => {
+// onMounted(async () => {
 
-  // 订单状态 在onMounted中注册
-  socket.on('statusChange', async () => {
-    const res = await getOrderDetailAPI(route.query.orderId as string)
-    console.log('问诊状态-订单详情--->', res);
+//   // 订单状态 在onMounted中注册
+//   socket.on('statusChange', async () => {
+//     const res = await getOrderDetailAPI(route.query.orderId as string)
+//     console.log('问诊状态-订单详情--->', res);
 
-    consult.value = res.data
+//     consult.value = res.data
 
-  })
-})
+//   })
+// })
 </script>
 
 <template>

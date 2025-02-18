@@ -83,7 +83,7 @@ export type Message = {
     /* 文本类型内容 */
     content?: string
     /* 图片对象 */
-    picture: Image
+    picture?: Image
     /* 问诊记录，患者信息 */
     consultRecord?: Consult & {
       patientInfo: Patient
@@ -96,13 +96,13 @@ export type Message = {
 }
 
 // 消息分组列表
-export type TimeMessage = {
-  /* 分组消息最早时间 */
+export type TimeMessages = {
+  /** 分组消息最早时间 */
   createTime: string
-  /* 消息数组 */
+  /** 消息数组 */
   items: Message[]
-  /* 订单ID */
-  orderID: string
-  /* 会话ID */
+  /** 订单ID */
+  orderId: string
+  /** 会话ID */
   sid: string
 }
