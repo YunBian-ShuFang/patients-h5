@@ -1,137 +1,142 @@
 <script setup lang="ts">
-// 组件
-import RoomStatus from './components/RoomStatus.vue'
-import RoomAction from './components/RoomAction.vue'
-import RoomMessage from './components/RoomMessage.vue'
+// 组件引入
+import RoomStatus from './components/RoomStatus.vue' // 订单状态组件
+import RoomAction from './components/RoomAction.vue' // 发送消息组件
+import RoomMessage from './components/RoomMessage.vue' // 显示聊天记录组件
+
 // 聊天相关
-import { useUserStore } from '@/stores'
-import { useRoute } from 'vue-router'
-import { io, type Socket } from 'socket.io-client'
-import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue'
-import { baseURL } from '@/utils/request'
+import { useUserStore } from '@/stores' // 引入用户 store
+import { useRoute } from 'vue-router' // 引入路由信息
+import { io, type Socket } from 'socket.io-client' // 引入 socket.io 用于实时通信
+import { nextTick, onMounted, onUnmounted, provide, ref } from 'vue' // 引入 Vue 相关 API
+import { baseURL } from '@/utils/request' // 引入基本的请求地址配置
+
 // 类型和枚举
-import type { Message, TimeMessages } from '@/types/room'
-import { MsgType, OrderType } from '@/enums'
-import type { ConsultOrderItem, Image } from '@/types/consult'
+import type { Message, TimeMessages } from '@/types/room' // 引入消息类型
+import { MsgType, OrderType } from '@/enums' // 引入消息类型和订单状态枚举
+import type { ConsultOrderItem, Image } from '@/types/consult' // 引入咨询订单类型和图片类型
+
 // 接口相关
-import { getOrderDetailAPI } from '@/services/consult'
-import dayjs from 'dayjs'
-import { showFailToast } from 'vant'
+import { getOrderDetailAPI } from '@/services/consult' // 获取订单详情的 API
+import dayjs from 'dayjs' // 用于日期格式化
+import { showFailToast } from 'vant' // 引入提示组件
 
-
+// 获取用户信息的 store
 const store = useUserStore()
 const route = useRoute()
 
-// 记录每段消息开始时间,作为下一次请求的开始时间
+// 记录消息的开始时间，用于下一次请求获取消息时的时间参数
 const time = ref(dayjs().format('YYYY-MM-DD HH:mm:ss'))
 
+// 初次加载时判断是否是初始消息
 const initialMsg = ref(true)
 
-// 连接服务器
+/**
+ * 聊天消息相关
+ * chatMsgList: 接收聊天记录
+ * sendChatMsg: 发送消息
+ * receiveChatMsg: 接收消息
+ * updateMsgStatus: 标记消息已读
+ * getChatMsgList: 获取聊天记录
+ * statusChange: 接收订单状态变化
+ */
+
+// 建立与服务器的 socket 连接
 const socket = io(baseURL, {
   auth: {
-    token: `Bearer ${store.user?.token}`
+    token: `Bearer ${store.user?.token}` // 用用户的 token 进行认证
   },
   query: {
-    orderId: route.query.orderId
+    orderId: route.query.orderId // 传递当前的订单 ID
   }
 })
 
-// 建立连接成功
+// 连接成功时的回调
 socket.on('connect', () => {
-  list.value = []
+  list.value = [] // 重置消息列表
 })
 
-// 接收别人的消息
-// chatMsgList 接受聊天记录
-const list = ref<Message[]>([])
+// 接收聊天记录
+// chatMsgList 接收时间和消息数据
+const list = ref<Message[]>([]) // 聊天消息列表
 socket.on('chatMsgList', ({ data }: { data: TimeMessages[] }) => {
-  // data 是有多个时间消息小组对象组成的数组
-  // data.forEach(el => {
-  //   const items = el.items
-  //   list.value.push(...items)
-  // })
-  const arr: Message[] = []
+  const arr: Message[] = [] // 用来存储处理后的消息
   data.forEach((item, i) => {
-    if (i === 0) time.value = item.createTime
+    if (i === 0) time.value = item.createTime // 设置初始时间为第一段消息的时间
     arr.push({
-      msgType: MsgType.Notify,
-      msg: { content: item.createTime },
+      msgType: MsgType.Notify, // 类型为通知
+      msg: { content: item.createTime }, // 显示时间戳
       createTime: item.createTime,
       id: item.createTime
     })
-    arr.push(...item.items)
+    arr.push(...item.items) // 合并消息项
   })
   // 追加到聊天消息列表
   list.value.unshift(...arr)
 
   loading.value = false
   if (!data.length) {
-    return showFailToast('没有聊天记录了')
+    return showFailToast('没有聊天记录了') // 如果没有记录则弹出提示
   }
-  console.log('接收别人的消息--->', list.value);
 
   nextTick(() => {
+    // 第一次加载时滚动到底部，并发送已读状态
     if (initialMsg.value) {
-      window.scrollTo(0, document.body.scrollHeight)
-      initialMsg.value = false
+      socket.emit('updateMsgStatus', arr[arr.length - 1].id) // 标记消息已读
+      window.scrollTo(0, document.body.scrollHeight) // 滚动到底部
+      initialMsg.value = false // 标记为非初始消息
     }
   })
 })
 
-// 除了接收聊天记录以外，别人给我发的消息还包括，即时通讯
-socket.on('receiveChatMsg', (res) => {
-  console.log('即时通讯res--->', res);
-
-  list.value.push(res)
-  nextTick(() => {
-    window.scrollTo(0, document.body.scrollHeight)
-  })
-
+// 接收即时聊天消息
+socket.on('receiveChatMsg', async (res) => {
+  list.value.push(res) // 添加新的消息到消息列表
+  await nextTick()
+  socket.emit('updateMsgStatus', res.id) // 标记新消息为已读
+  window.scrollTo(0, document.body.scrollHeight) // 滚动到底部
 })
 
-// 订单状态
-// 发请求获取
+// 获取订单详情
 const consult = ref<ConsultOrderItem>()
 
-provide("consult", consult.value)
+provide("consult", consult.value) // 将订单数据提供给后代组件
 
+// 加载订单的详细信息
 const loadDetailData = async () => {
   const res = await getOrderDetailAPI(route.query.orderId as string)
   consult.value = res.data
-  console.log('room订单请求--->', consult.value);
-
+  console.log('room订单请求--->', consult.value)
 }
 
-loadDetailData()
+loadDetailData() // 调用函数获取订单详情
 
+// 发送文本消息
 const sendText = (text: string) => {
-  // 发送信息
   socket.emit('sendChatMsg', {
-    from: store.user?.id,
-    to: consult.value?.docInfo?.id,
-    msgType: MsgType.MsgText,
-    msg: { content: text }
+    from: store.user?.id, // 发送者 ID
+    to: consult.value?.docInfo?.id, // 接收者 ID
+    msgType: MsgType.MsgText, // 消息类型
+    msg: { content: text } // 消息内容
   })
 }
 
+// 发送图片消息
 const sendImage = (img: Image) => {
-  // 发送图片
   socket.emit('sendChatMsg', {
     from: store.user?.id,
     to: consult.value?.docInfo?.id,
-    MsgType: MsgType.MsgImage,
-    msg: { picture: img }
+    MsgType: MsgType.MsgImage, // 图片消息类型
+    msg: { picture: img } // 图片内容
   })
 }
 
 // 下拉刷新
-const loading = ref(false)
+const loading = ref(false) // 控制下拉刷新状态
 const onRefresh = () => {
-  // 触发下拉
+  // 触发下拉刷新时，获取新的聊天记录
   socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
 }
-
 </script>
 
 <template>
