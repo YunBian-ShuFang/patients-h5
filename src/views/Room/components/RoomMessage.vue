@@ -32,7 +32,7 @@ const getConsultFlagText = (flag: 0 | 1) =>
 const formatTime = (time: string) => dayjs(time).format('HH:mm')
 
 // 查看处方
-const showPrescription = async (id: string) => {
+const showPrescription = async (id?: string) => {
   if (id) {
     const res = await getPrescriptionPicAPI(id)
     console.log('查看处方--->', res);
