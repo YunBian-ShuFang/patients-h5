@@ -1,5 +1,6 @@
 import type { ConsultOrderPreParams, PartialConsult } from '@/types/consult'
 import { instance } from '@/utils/request'
+import { post } from 'node_modules/axios/index.cjs'
 
 // 获取所有科室
 export const getAllDep = () => instance({ url: '/dep/all', method: 'get' })
@@ -87,4 +88,18 @@ export const delOrderAPI = (id: string) => {
 // 查看处方
 export const getPrescriptionPicAPI = (id: string) => {
   return instance(`/patient/consult/prescription/${id}`)
+}
+
+// 问诊-评价医生
+export const evaluateConsultOrder = (data: {
+  docId: string
+  orderId: string
+  score: number
+  content: string
+  anonymousFlag: 0 | 1
+}) => {
+  return instance({
+    url: '/patient/order/evaluate',
+    method: 'post'
+  })
 }

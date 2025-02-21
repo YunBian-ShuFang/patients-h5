@@ -1,52 +1,61 @@
 <script setup lang="ts">
-import { MsgType, type IllnessTime } from '@/enums'
-import { flagOptions, timeOptions } from '@/services/constants'
-import type { Image } from '@/types/consult'
-import type { Message } from '@/types/room'
-import { ImagePreview, showImagePreview } from 'vant'
-import dayjs from 'dayjs'
-import { useUserStore } from '@/stores'
-import { getPrescriptionPicAPI } from '@/services/consult'
+  import { MsgType, type IllnessTime } from '@/enums'
+  import { flagOptions, timeOptions } from '@/services/constants'
+  import type { Image } from '@/types/consult'
+  import type { Message, Prescription } from '@/types/room'
+  import { ImagePreview, showImagePreview } from 'vant'
+  import dayjs from 'dayjs'
+  import { useUserStore } from '@/stores'
+  import { getPrescriptionPicAPI } from '@/services/consult'
 
-const store = useUserStore()
+  // 评价组件
+  import EvaluatedCard from './RoomEvaluateCard.vue'
 
-// 预览病情图片
-const previewImg = (pictures?: Image[]) => {
-  // if (pictures && pictures.length) {
-  //   return ImagePreview(pictures.map((item) => item.url))
-  // }
-  if (pictures && pictures.length) {
-    showImagePreview(pictures.map((item) => item.url))
+  const store = useUserStore()
+
+  // 预览病情图片
+  const previewImg = (pictures?: Image[]) => {
+    // if (pictures && pictures.length) {
+    //   return ImagePreview(pictures.map((item) => item.url))
+    // }
+    if (pictures && pictures.length) {
+      showImagePreview(pictures.map(item => item.url))
+    }
   }
-}
 
-defineProps<{ list: Message[] }>()
+  defineProps<{ list: Message[] }>()
 
-const getIllnessTimeText = (time: IllnessTime) =>
-  timeOptions.find((item) => item.value === time)?.label
+  const getIllnessTimeText = (time: IllnessTime) =>
+    timeOptions.find(item => item.value === time)?.label
 
-const getConsultFlagText = (flag: 0 | 1) =>
-  flagOptions.find((item) => item.value === flag)?.label
+  const getConsultFlagText = (flag: 0 | 1) => flagOptions.find(item => item.value === flag)?.label
 
-// 格式化时间
-const formatTime = (time: string) => dayjs(time).format('HH:mm')
+  // 格式化时间
+  const formatTime = (time: string) => dayjs(time).format('HH:mm')
 
-// 查看处方
-const showPrescription = async (id?: string) => {
-  if (id) {
-    const res = await getPrescriptionPicAPI(id)
-    console.log('查看处方--->', res);
+  // 查看处方
+  const showPrescription = async (id?: string) => {
+    if (id) {
+      const res = await getPrescriptionPicAPI(id)
+      console.log('查看处方--->', res)
 
-    showImagePreview([res.data.url])
+      showImagePreview([res.data.url])
+    }
   }
-}
+
+  // 购买药品
+  const buy = (prescription: any) => {}
 </script>
 
 <template>
-  <div v-for="{ msgType, msg, createTime, from, id, fromAvatar } in list" :key="id">
+  <div
+    v-for="{ msgType, msg, createTime, from, id, fromAvatar } in list"
+    :key="id">
     <!-- 消息卡片组件 -->
     <!-- 病情描述 患者卡片 -->
-    <div class="msg msg-illness" v-if="msgType === MsgType.CardPat">
+    <div
+      class="msg msg-illness"
+      v-if="msgType === MsgType.CardPat">
       <div class="patient van-hairline--bottom">
         <p>
           {{ msg.consultRecord?.patientInfo.name }}
@@ -62,32 +71,42 @@ const showPrescription = async (id?: string) => {
         <van-col span="6">病情描述</van-col>
         <van-col span="18">{{ msg.consultRecord?.illnessDesc }}</van-col>
         <van-col span="6">图片</van-col>
-        <van-col span="18" @click="previewImg(msg.consultRecord?.pictures)">
+        <van-col
+          span="18"
+          @click="previewImg(msg.consultRecord?.pictures)">
           点击查看
         </van-col>
       </van-row>
     </div>
     <!-- 通知-通用 -->
-    <div class="msg msg-tip" v-if="msgType === 31">
+    <div
+      class="msg msg-tip"
+      v-if="msgType === 31">
       <div class="content">
         <span>{{ msg.content }}</span>
       </div>
     </div>
     <!-- 通知-温馨提示 -->
-    <div class="msg msg-tip" v-if="msgType === MsgType.NotifyTip">
+    <div
+      class="msg msg-tip"
+      v-if="msgType === MsgType.NotifyTip">
       <div class="content">
         <span class="green">温馨提示：</span>
         <span>{{ msg.content }}</span>
       </div>
     </div>
     <!-- 通知-结束 -->
-    <div class="msg msg-tip msg-tip-cancel">
+    <div
+      class="msg msg-tip msg-tip-cancel"
+      v-if="msgType === MsgType.NotifyCancel">
       <div class="content">
-        <span>订单取消</span>
+        <span>{{ msg.content }}</span>
       </div>
     </div>
     <!-- 发送文字 -->
-    <div class="msg msg-to" v-if="msgType === MsgType.MsgText && store.user?.id === from">
+    <div
+      class="msg msg-to"
+      v-if="msgType === MsgType.MsgText && store.user?.id === from">
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
         <div class="pao">{{ msg.content }}</div>
@@ -95,15 +114,21 @@ const showPrescription = async (id?: string) => {
       <van-image :src="store.user?.avatar" />
     </div>
     <!-- 发送图片 -->
-    <div class="msg msg-to" v-if="msgType === MsgType.MsgImage && store.user?.id !== from">
+    <div
+      class="msg msg-to"
+      v-if="msgType === MsgType.MsgImage && store.user?.id !== from">
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
-        <van-image fit="contain" :src="msg.picture?.url" />
+        <van-image
+          fit="contain"
+          :src="msg.picture?.url" />
       </div>
       <van-image :src="store.user?.avatar" />
     </div>
     <!-- 接收文字 -->
-    <div class="msg msg-from" v-if="msgType === MsgType.MsgText && store.user?.id !== from">
+    <div
+      class="msg msg-from"
+      v-if="msgType === MsgType.MsgText && store.user?.id !== from">
       <van-image :src="fromAvatar" />
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
@@ -111,21 +136,28 @@ const showPrescription = async (id?: string) => {
       </div>
     </div>
     <!-- 接收图片 -->
-    <div class="msg msg-from" v-if="msgType === MsgType.MsgImage && store.user?.id !== from">
+    <div
+      class="msg msg-from"
+      v-if="msgType === MsgType.MsgImage && store.user?.id !== from">
       <van-image :src="fromAvatar" />
       <div class="content">
         <div class="time">{{ formatTime(createTime) }}</div>
-        <van-image fit="contain" :src="msg.picture?.url" />
+        <van-image
+          fit="contain"
+          :src="msg.picture?.url" />
       </div>
     </div>
     <!-- 处方卡片 -->
-    <div class="msg msg-recipe" v-if="msgType === MsgType.CardPre">
+    <div
+      class="msg msg-recipe"
+      v-if="msgType === MsgType.CardPre">
       <div class="content">
         <div class="head van-hairline--bottom">
           <div class="head-tit">
             <h3>电子处方</h3>
             <p @click="showPrescription(msg.prescription?.id)">
-              原始处方 <van-icon name="arrow"></van-icon>
+              原始处方
+              <van-icon name="arrow"></van-icon>
             </p>
           </div>
           <p>
@@ -137,7 +169,10 @@ const showPrescription = async (id?: string) => {
           <p>开方时间：{{ msg.prescription?.createTime }}</p>
         </div>
         <div class="body">
-          <div class="body-item" v-for="med in msg.prescription?.medicines" :key="med.id">
+          <div
+            class="body-item"
+            v-for="med in msg.prescription?.medicines"
+            :key="med.id">
             <div class="durg">
               <p>{{ med.name }} {{ med.specs }}</p>
               <p>{{ med.usageDosag }}</p>
@@ -151,9 +186,14 @@ const showPrescription = async (id?: string) => {
       </div>
     </div>
     <!-- 评价卡片 -->
+    <div
+      class="msg msg-comment"
+      v-if="msgType === MsgType.CardEva || msgType === MsgType.CardEvaForm">
+      <evaluate-card :evaluateDoc="msg.evaluateDoc"></evaluate-card>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
-@import '@/styles/room.scss';
+  @import '@/styles/room.scss';
 </style>
