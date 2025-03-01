@@ -110,6 +110,11 @@
   }
 
   loadDetailData() // 调用函数获取订单详情
+  // 这里注意发请求的数据, 一开始拿到结果就定死了,
+  // 现在需要监听 websocket 通知的状态改变时间, 重新渲染吗
+  socket.on('statusChange', () => {
+    loadDetailData()
+  })
 
   // 发送文本消息
   const sendText = (text: string) => {
@@ -119,16 +124,26 @@
       msgType: MsgType.MsgText, // 消息类型
       msg: { content: text } // 消息内容
     })
+    console.log('烦死了--文字发送', list.value)
   }
 
   // 发送图片消息
   const sendImage = (img: Image) => {
-    socket.emit('sendChatMsg', {
+    const message = {
       from: store.user?.id,
       to: consult.value?.docInfo?.id,
-      MsgType: MsgType.MsgImage, // 图片消息类型
+      msgType: MsgType.MsgImage, // 确保是图片类型
       msg: { picture: img } // 图片内容
-    })
+    }
+    console.log('发送的消息:', message) // 调试输出
+    socket.emit('sendChatMsg', message)
+    // socket.emit('sendChatMsg', {
+    //   from: store.user?.id,
+    //   to: consult.value?.docInfo?.id,
+    //   MsgType: MsgType.MsgImage, // 图片消息类型
+    //   msg: { picture: img } // 图片内容
+    // })
+    console.log('烦死了--图片发送', list.value)
   }
 
   // 下拉刷新
@@ -136,6 +151,7 @@
   const onRefresh = () => {
     // 触发下拉刷新时，获取新的聊天记录
     socket.emit('getChatMsgList', 20, time.value, route.query.orderId)
+    console.log('烦死了--下拉刷新', list.value)
   }
 
   // 注入订单信息
@@ -155,18 +171,15 @@
 <template>
   <div class="room-page">
     <cp-nav-bar title="医生问诊室" />
-    <room-status
-      :status="consult?.status"
-      :countdown="consult?.countdown" />
-    <van-pull-refresh
-      v-model="loading"
-      @refresh="onRefresh">
+    <room-status :status="consult?.status" :countdown="consult?.countdown" />
+    <van-pull-refresh v-model="loading" @refresh="onRefresh">
       <room-message :list="list" />
     </van-pull-refresh>
     <room-action
       @send-text="sendText"
       @send-image="sendImage"
-      :disabled="consult?.status !== OrderType.ConsultChat" />
+      :disabled="consult?.status !== OrderType.ConsultChat"
+    />
   </div>
 </template>
 

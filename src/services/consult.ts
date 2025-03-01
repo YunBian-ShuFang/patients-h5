@@ -1,6 +1,5 @@
 import type { ConsultOrderPreParams, PartialConsult } from '@/types/consult'
 import { instance } from '@/utils/request'
-import { post } from 'node_modules/axios/index.cjs'
 
 // 获取所有科室
 export const getAllDep = () => instance({ url: '/dep/all', method: 'get' })

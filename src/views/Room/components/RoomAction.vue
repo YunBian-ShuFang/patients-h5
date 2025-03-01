@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { uploadImage } from '@/services/consult'
   import type { Image } from '@/types/consult'
-  import { Toast, type UploaderAfterRead } from 'vant'
+  import { showLoadingToast, Toast, type UploaderAfterRead } from 'vant'
   import { ref } from 'vue'
 
   defineProps<{
@@ -30,13 +30,13 @@
     if (!data.file) return
 
     // 3. 显示上传中提示
-    const t = Toast.loading('正在上传')
+    const t = showLoadingToast('正在上传')
 
     // 4. 调用 uploadImage 函数上传文件
     const res = await uploadImage(data.file)
 
     // 5. 清除上传中提示
-    t.clear()
+    t.close()
 
     // 6. 上传成功后触发 'send-image' 事件，传递上传后的图片信息
     emit('send-image', res.data)
@@ -53,12 +53,10 @@
       placeholder="问医生"
       autocomplete="off"
       :disabled="disabled"
-      @keyup.enter="sendText"></van-field>
+      @keyup.enter="sendText"
+    ></van-field>
     <!-- 不预览，使用小图标作为上传按钮 -->
-    <van-uploader
-      :preview-image="false"
-      :disabled="disabled"
-      :after-read="sendImage">
+    <van-uploader :preview-image="false" :disabled="disabled" :after-read="sendImage">
       <cp-icon name="consult-img" />
     </van-uploader>
   </div>
