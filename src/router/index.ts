@@ -93,6 +93,16 @@ const router = createRouter({
       meta: { title: '问诊详情' }
     },
     {
+      path: '/order/pay',
+      component: () => import('@/views/Order/OrderPay.vue'),
+      meta: { title: '药品支付' }
+    },
+    {
+      path: '/order/pay/result',
+      component: () => import('@/views/Order/OrderPayResult.vue'),
+      meta: { title: '药品支付结果' }
+    },
+    {
       path: '/login',
       component: () => import('@/views/Login/index.vue'),
       meta: { title: '登陆' }
@@ -109,7 +119,7 @@ const router = createRouter({
 })
 
 // 前置守卫 -- 访问权限控制
-router.beforeEach((to) => {
+router.beforeEach(to => {
   // 加载进度条开启
   NProgress.start()
   // 用户仓库
@@ -122,7 +132,7 @@ router.beforeEach((to) => {
 })
 
 // 后置守卫
-router.afterEach((to) => {
+router.afterEach(to => {
   // 页面标题
   document.title = `优医问诊-${to.meta.title || ''}`
   // 进度条关闭
