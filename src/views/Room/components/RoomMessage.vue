@@ -3,7 +3,7 @@
   import { flagOptions, timeOptions } from '@/services/constants'
   import type { Image } from '@/types/consult'
   import type { Message, Prescription } from '@/types/room'
-  import { showImagePreview, showToast } from 'vant'
+  import { showFailToast, showImagePreview, showToast } from 'vant'
   import dayjs from 'dayjs'
   import { useUserStore } from '@/stores'
   import { getPrescriptionPicAPI } from '@/services/consult'
@@ -52,7 +52,7 @@
     }
   }
 
-  // 购买药品--跳转
+  // // 购买药品--跳转
   const router = useRouter()
   const buy = (pre?: Prescription) => {
     if (pre) {

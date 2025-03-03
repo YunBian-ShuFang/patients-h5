@@ -1,14 +1,12 @@
 import { OrderType } from '@/enums'
-import {
-  cancelOrder,
-  delOrderAPI,
-  getPrescriptionPicAPI
-} from '@/services/consult'
+import { cancelOrder, delOrderAPI, getPrescriptionPicAPI } from '@/services/consult'
 import { followOrUnfollow } from '@/services/home'
+import { getMedicineOrderDetail } from '@/services/order'
 import type { ConsultOrderItem } from '@/types/consult'
 import type { FollowType } from '@/types/home'
+import type { OrderDetail } from '@/types/order'
 import { showFailToast, showImagePreview, showSuccessToast } from 'vant'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 /* 关注功能封装 */
 export const useFollow = (type: FollowType = 'doc') => {
@@ -71,4 +69,22 @@ export const useDeleteOrder = (cb: () => void) => {
     }
   }
   return { loading, delConsultOrder }
+}
+
+/* 获取药品订单详情逻辑封装 */
+export const useOrderDetail = (id: string) => {
+  const loading = ref(false)
+  const order = ref<OrderDetail>()
+  onMounted(async () => {
+    loading.value = true
+    try {
+      const res = await getMedicineOrderDetail(id)
+      console.log('药品订单详情--composable-->', res)
+
+      order.value = res.data
+    } finally {
+      loading.value = false
+    }
+  })
+  return { order, loading }
 }
