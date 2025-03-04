@@ -31,3 +31,11 @@ export const getMedicineOrderDetail = (id: string) => {
     url: `/patient/medicine/order/detail/${id}`
   })
 }
+
+// 查询物流信息
+export const getMedicalOrderLogistics = (id: string) => {
+  return instance({
+    url: `/patient/order/${id}/logistics`,
+    method: 'get'
+  })
+}
