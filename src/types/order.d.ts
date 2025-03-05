@@ -128,7 +128,7 @@ export type Logistics = {
   /* 物流信息数组 */
   list: Express[]
   /* 轨迹信息数组 */
-  logisticsInfo: Location
+  logisticsInfo: Location[]
   /* 当前运输位置 */
   currentLocationInfo: Location
 }

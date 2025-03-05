@@ -15,6 +15,7 @@
     "lint-staged": "lint-staged"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@vueuse/core": "^11.1.0",
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",

@@ -3,6 +3,8 @@
   import type { Logistics } from '@/types/order'
   import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
+  // 引入地图资源
+  import AMapLoader from '@amap/amap-jsapi-loader'
 
   const router = useRouter()
 
@@ -13,7 +15,48 @@
     const res = await getMedicalOrderLogistics(route.params.id as string)
     console.log('物流信息--OrderLogistics->', res)
     logistics.value = res.data
+
+    // 高德地图
+    AMapLoader.load({
+      key: '183aef9cbde8dce0f8b4331ed8a03945',
+      version: '2.0'
+    }).then(AMap => {
+      // 使用 AMap 初始化地图
+      const map = new AMap.Map('map', {
+        mapStyle: 'amap://styles/whitesmoke',
+        zoom: 12
+      })
+
+      AMap.plugin('AMap.Driving', function () {
+        const driving = new AMap.Driving({
+          map: map,
+          showTraffic: false,
+          hideMarkers: true
+        })
+
+        if (logistics.value?.logisticsInfo && logistics.value.logisticsInfo.length >= 22) {
+          const list = [...logistics.value.logisticsInfo]
+          // 起点
+          const start = list.shift()
+          // 终点
+          const end = list.pop()
+          driving.search(
+            [start?.longitude, start?.latitude],
+            [end?.longitude, end?.latitude],
+            { waypoints: list.map(item => [item.longitude, item.latitude]) },
+            () => {
+              // 规划完毕
+            }
+          )
+        }
+      })
+    })
   })
+
+  // 地图相关
+  window._AMapSecurityConfig = {
+    securityJsCode: '378746d26437d40cc5dff02b9988a486'
+  }
 </script>
 
 <template>
