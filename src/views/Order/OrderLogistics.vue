@@ -1,10 +1,14 @@
 <script setup lang="ts">
   import { getMedicalOrderLogistics } from '@/services/order'
-  import type { Logistics } from '@/types/order'
+  import type { Location, Logistics } from '@/types/order'
   import { onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   // 引入地图资源
   import AMapLoader from '@amap/amap-jsapi-loader'
+  // 地图图标导入
+  import startImg from '@/assets/icons/start.png'
+  import endImg from '@/assets/icons/end.png'
+  import carImg from '@/assets/icons/car.png'
 
   const router = useRouter()
 
@@ -36,16 +40,48 @@
 
         if (logistics.value?.logisticsInfo && logistics.value.logisticsInfo.length >= 22) {
           const list = [...logistics.value.logisticsInfo]
+
+          // 创建标记函数
+          const getMarker = (point: Location, image: string, width = 25, height = 30) => {
+            const icon = new AMap.Icon({
+              size: new AMap.Size(width, height),
+              image,
+              imageSize: new AMap.Size(width, height)
+            })
+            const marker = new AMap.Marker({
+              position: [point?.longitude, point?.latitude],
+              icon: icon,
+              offset: new AMap.Pixel(-width / 2, -height)
+            })
+            return marker
+          }
+
           // 起点
           const start = list.shift()
+          const startMarker = getMarker(start!, startImg)
+          map.add(startMarker)
+
           // 终点
           const end = list.pop()
+          const endMarker = getMarker(end!, endImg)
+          map.add(endMarker)
+
           driving.search(
             [start?.longitude, start?.latitude],
             [end?.longitude, end?.latitude],
             { waypoints: list.map(item => [item.longitude, item.latitude]) },
             () => {
               // 规划完毕
+              // 运输位置
+              const curr = logistics.value?.currentLocationInfo
+              const currMarker = getMarker(curr!, carImg, 33, 20)
+              map.add(currMarker)
+
+              // 3s后定位当中间进行缩放
+              setTimeout(() => {
+                map.setFitView([currMarker])
+                map.setZoom(10)
+              }, 3000)
             }
           )
         }
