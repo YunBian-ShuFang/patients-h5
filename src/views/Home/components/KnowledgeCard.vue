@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useFollow } from '@/composable'
-import type { Knowledge } from '@/types/consult'
+  import { useFollow } from '@/composable'
+  import type { Knowledge } from '@/types/home'
 
-defineProps<{ item: Knowledge }>()
+  defineProps<{ item: Knowledge }>()
 
-const { loading, follow } = useFollow('knowledge')
+  const { loading, follow } = useFollow('knowledge')
 </script>
 
 <template>
@@ -18,13 +18,7 @@ const { loading, follow } = useFollow('knowledge')
           {{ item.creatorTitles }}
         </p>
       </div>
-      <van-button
-        :loading="loading"
-        class="btn"
-        round
-        size="small"
-        @click="follow(item)"
-      >
+      <van-button :loading="loading" class="btn" round size="small" @click="follow(item)">
         {{ item.likeFlag === 1 ? '已关注' : '+ 关注' }}
       </van-button>
     </div>
@@ -33,10 +27,10 @@ const { loading, follow } = useFollow('knowledge')
         {{ item.title }}
       </h3>
       <p class="tag" v-if="item.topics && Array.isArray(item.topics)">
-        <span v-for="(tag, i) in item.topics" :key="i"> # {{ tag }} </span>
+        <span v-for="(tag, i) in item.topics" :key="i"># {{ tag }}</span>
       </p>
       <p class="tag" v-else>
-        <span> # {{ item.topic }} </span>
+        <span># {{ item.topic }}</span>
       </p>
       <p class="intro van-multi-ellipsis--l2">
         {{ item.content.replace(/<[^>]+>/g, '') }}
@@ -53,82 +47,82 @@ const { loading, follow } = useFollow('knowledge')
 </template>
 
 <style lang="scss" scoped>
-.knowledge-card {
-  padding: 20px 0 16px;
-  .head {
-    display: flex;
-    align-items: center;
-    .avatar {
-      width: 38px;
-      height: 38px;
-      margin-right: 10px;
-    }
-    .info {
-      width: 200px;
-      padding-right: 10px;
-      .name {
-        color: var(--cp-text2);
-      }
-      .dep {
-        color: var(--cp-tip);
-        font-size: 12px;
-      }
-    }
-    .btn {
-      padding: 0 12px;
-      border-color: var(--cp-primary);
-      color: var(--cp-primary);
-      height: 28px;
-      width: 72px;
-    }
-  }
-  .body {
-    .title {
-      font-size: 16px;
-      margin-top: 8px;
-      font-weight: normal;
-    }
-    .tag {
-      margin-top: 6px;
-      > span {
-        color: var(--cp-primary);
-        margin-right: 20px;
-        font-size: 12px;
-      }
-    }
-    .intro {
-      margin-top: 7px;
-      line-height: 2;
-      color: var(--cp-text3);
-    }
-    .imgs {
-      margin-top: 7px;
+  .knowledge-card {
+    padding: 20px 0 16px;
+    .head {
       display: flex;
-      .van-image {
-        width: 106px;
-        height: 106px;
-        margin-right: 12px;
-        border-radius: 12px;
-        overflow: hidden;
-        &:last-child {
-          margin-right: 0;
+      align-items: center;
+      .avatar {
+        width: 38px;
+        height: 38px;
+        margin-right: 10px;
+      }
+      .info {
+        width: 200px;
+        padding-right: 10px;
+        .name {
+          color: var(--cp-text2);
+        }
+        .dep {
+          color: var(--cp-tip);
+          font-size: 12px;
         }
       }
-      &.large {
-        .van-image {
-          width: 185px;
-          height: 125px;
-        }
+      .btn {
+        padding: 0 12px;
+        border-color: var(--cp-primary);
+        color: var(--cp-primary);
+        height: 28px;
+        width: 72px;
       }
     }
-    .logs {
-      margin-top: 10px;
-      > span {
-        color: var(--cp-tip);
-        margin-right: 16px;
-        font-size: 12px;
+    .body {
+      .title {
+        font-size: 16px;
+        margin-top: 8px;
+        font-weight: normal;
+      }
+      .tag {
+        margin-top: 6px;
+        > span {
+          color: var(--cp-primary);
+          margin-right: 20px;
+          font-size: 12px;
+        }
+      }
+      .intro {
+        margin-top: 7px;
+        line-height: 2;
+        color: var(--cp-text3);
+      }
+      .imgs {
+        margin-top: 7px;
+        display: flex;
+        .van-image {
+          width: 106px;
+          height: 106px;
+          margin-right: 12px;
+          border-radius: 12px;
+          overflow: hidden;
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+        &.large {
+          .van-image {
+            width: 185px;
+            height: 125px;
+          }
+        }
+      }
+      .logs {
+        margin-top: 10px;
+        > span {
+          color: var(--cp-tip);
+          margin-right: 16px;
+          font-size: 12px;
+        }
       }
     }
   }
-}
 </style>

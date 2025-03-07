@@ -10,7 +10,7 @@
     actualPayment: number // 实际支付金额
     onClose?: () => void // 可选的关闭回调函数
     show: boolean // 控制支付抽屉是否显示
-    payCallback: string // 设置回跳地址
+    payCallback?: string // 设置回跳地址
   }>()
 
   // 定义事件的 emit 类型
