@@ -57,6 +57,8 @@
         // 打开支付抽屉
         show.value = true
       } catch (error) {
+        console.log('生成订单--->', error)
+
         loading.value = false
       }
     } else {
@@ -78,7 +80,7 @@
       <p class="detail">{{ address.addressDetail }}</p>
       <p>
         {{ address.receiver }}
-        {{ address.mobile.replace(/^(d{3})\d+(\d{4})$/, '\$1****\$2') }}
+        {{ address.mobile.replace(/^(\d{3})\d+(\d{4})$/, '\$1****\$2') }}
       </p>
     </div>
     <div class="order-medical">
@@ -106,8 +108,8 @@
       <van-cell-group>
         <van-cell title="药品金额" :value="`￥${orderPer.payment}`"></van-cell>
         <van-cell title="运费" :value="`￥${orderPer.expressFee}`"></van-cell>
-        <van-cell title="优惠券" :value="-`￥${orderPer.couponDeduction}`"></van-cell>
-        <van-cell title="实付款" :value="`￥${orderPer.actualPayment}`"></van-cell>
+        <van-cell title="优惠券" :value="`-￥${orderPer.couponDeduction}`"></van-cell>
+        <van-cell title="实付款" :value="`￥${orderPer.actualPayment}`" class="price"></van-cell>
       </van-cell-group>
     </div>
     <div class="order-tip">
@@ -115,9 +117,9 @@
         由于药品的特殊性，如非错发、漏发药品的情况，药品一经发出
         不得退换，请核对药品信息无误后下单。
       </p>
-      <van-checkbox>
+      <van-checkbox v-model="agree">
         我已同意
-        <a href="javascript">支付协议</a>
+        <a href="javascript:;">支付协议</a>
       </van-checkbox>
     </div>
     <van-submit-bar
@@ -125,15 +127,16 @@
       button-text="立即支付"
       button-type="primary"
       text-align="left"
+      @submit="submit"
     ></van-submit-bar>
   </div>
 
-  <dive class="order-pay-page" v-else>
+  <div class="order-pay-page" v-else>
     <cp-nav-bar title="支付药款" />
     <van-skeleton title avatar row="2" style="margin-top: 15px" />
     <van-skeleton title row="4" style="margin-top: 50px" />
     <van-skeleton title row="4" style="margin-top: 50px" />
-  </dive>
+  </div>
 
   <cp-pay-sheet
     v-model:show="show"
@@ -175,7 +178,7 @@
   }
 
   .order-pay-page {
-    padding: 26px 0 65px;
+    padding: 46px 0 65px;
   }
 
   .order-address {

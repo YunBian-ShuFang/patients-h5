@@ -87,7 +87,7 @@
     <van-action-bar v-if="order?.status === OrderType.MedicinePay">
       <p class="price">
         需要支付：
-        <span>￥{{ order.actualPayment }}</span>
+        <span>￥{{ order.actualPayment.toFixed() }}</span>
       </p>
       <van-action-bar-button color="#bbb" text="取消订单" />
       <van-action-bar-button type="primary" text="继续支付" />

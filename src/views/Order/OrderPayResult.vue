@@ -20,14 +20,14 @@
     <cp-nav-bar title="药品支付结果" />
     <div class="result" v-if="order?.status === OrderType.MedicinePay">
       <van-icon name="clear" />
-      <p class="price">￥ {{ order?.actualPayment }}</p>
+      <p class="price">￥{{ order?.actualPayment }}</p>
       <p class="status">支付失败</p>
       <p class="tip">订单支付失败，可以点击查看订单继续支付，如有疑问联系客服~</p>
     </div>
 
     <div class="result" v-else>
       <van-icon name="checked" />
-      <p class="price">￥ {{ order?.actualPayment }}</p>
+      <p class="price">￥{{ order?.actualPayment }}</p>
       <p class="status">支付成功</p>
       <p class="tip">订单支付成功，已通知药房尽快发出，请耐心等待~</p>
     </div>
