@@ -9,6 +9,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: process.env.NODE_ENV === 'production' ? '/patients-h5/' : '/',
   plugins: [
     // 解析单文件组件的插件
     vue(),
@@ -27,5 +28,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    port: 3000, // 开发服务器端口
+    open: true // 自动打开浏览器
   }
 })
