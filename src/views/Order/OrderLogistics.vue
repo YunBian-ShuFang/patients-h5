@@ -6,9 +6,9 @@
   // 引入地图资源
   import AMapLoader from '@amap/amap-jsapi-loader'
   // 地图图标导入
-  import startImg from '@/assets/icons/start.png'
-  import endImg from '@/assets/icons/end.png'
-  import carImg from '@/assets/icons/car.png'
+  import startImg from '@/assets/start.png'
+  import endImg from '@/assets/end.png'
+  import carImg from '@/assets/car.png'
 
   const router = useRouter()
 
