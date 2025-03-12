@@ -2,7 +2,6 @@ import { useUserStore } from '@/stores'
 import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { createWebHashHistory } from 'vue-router'
 
 // createRouter 创建路由实例，===> new VueRouter()
 // history 是路由模式，hash模式，history模式
@@ -15,7 +14,7 @@ import { createWebHashHistory } from 'vue-router'
 // vite.config.ts  添加配置  base: my-path，路由这就会加上 my-path 前缀了
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     // 首页布局容器
     {
@@ -123,19 +122,11 @@ const router = createRouter({
       component: () => import('@/views/Login/register.vue'),
       meta: { title: '注册' }
     }
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
-    // }
   ]
 })
 
 // 前置守卫 -- 访问权限控制
-router.beforeEach(to => {
+router.beforeEach((to, next) => {
   // 加载进度条开启
   NProgress.start()
   // 用户仓库
@@ -146,16 +137,21 @@ router.beforeEach(to => {
   // if (!store.user?.token && !whiteList.includes(to.path)) return '/login'
   // 否则不做处理
   if (store.user?.token) {
-    // 已登录 - 放行
+    // 已登录状态 -------------------------------------------------
+    // 如果尝试访问登录/注册页，重定向到首页
+    if (whiteList.includes(to.path)) {
+      return '/'
+    }
+    // 其他页面正常放行
     return true
   } else {
-    // 未登录
+    // 未登录状态 -------------------------------------------------
+    // 如果在白名单中，正常访问
     if (whiteList.includes(to.path)) {
       return true
-    } else {
-      // 跳转登录页
-      return '/login'
     }
+    // 否则跳转登录页
+    return '/login'
   }
 })
 
