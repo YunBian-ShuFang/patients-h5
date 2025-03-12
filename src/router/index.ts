@@ -22,9 +22,14 @@ const router = createRouter({
       // 一级路由容器
       // component: () => import('@/views/Login/index.vue')
       component: () => import('@/views/Layout/index.vue'),
-      redirect: '/home',
+      // redirect: '/home',
       children: [
         // 二级页面
+        {
+          path: '', // 空路径直接作为默认子路由
+          component: () => import('@/views/Home/index.vue'),
+          meta: { title: '首页' }
+        },
         {
           path: '/home',
           component: () => import('@/views/Home/index.vue'),
