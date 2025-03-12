@@ -116,6 +116,11 @@ const router = createRouter({
       path: '/login',
       component: () => import('@/views/Login/index.vue'),
       meta: { title: '登陆' }
+    },
+    {
+      path: '/register',
+      component: () => import('@/views/Login/register.vue'),
+      meta: { title: '注册' }
     }
     // {
     //   path: '/about',
@@ -135,10 +140,22 @@ router.beforeEach(to => {
   // 用户仓库
   const store = useUserStore()
   // 不需要登陆的页面，白名单
-  const whiteList = ['/login']
+  const whiteList = ['/login', '/register']
   // 如果没有登陆且不在白名单的，跳去登陆
-  if (!store.user?.token && !whiteList.includes(to.path)) return '/login'
+  // if (!store.user?.token && !whiteList.includes(to.path)) return '/login'
   // 否则不做处理
+  if (store.user?.token) {
+    // 已登录 - 放行
+    return true
+  } else {
+    // 未登录
+    if (whiteList.includes(to.path)) {
+      return true
+    } else {
+      // 跳转登录页
+      return '/login'
+    }
+  }
 })
 
 // 后置守卫

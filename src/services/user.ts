@@ -74,3 +74,12 @@ export const getPatientDetail = (id: string) => {
     method: 'get'
   })
 }
+
+// 注册 -- 开发中
+export const registerApi = (mobile: string, code: string, password: string) => {
+  return instance({
+    url: '/register',
+    method: 'post',
+    data: { mobile, code, password }
+  })
+}
