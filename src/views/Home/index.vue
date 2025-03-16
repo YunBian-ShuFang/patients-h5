@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import KnowledgeList from './components/KnowledgeList.vue'
-import FollowDoctor from './components/FollowDoctor.vue'
-import { ConsultType } from '@/enums'
-import { useConsultStore } from '@/stores'
+  import { ref } from 'vue'
+  import KnowledgeList from './components/KnowledgeList.vue'
+  import FollowDoctor from './components/FollowDoctor.vue'
+  import { ConsultType } from '@/enums'
+  import { useConsultStore } from '@/stores'
 
-const store = useConsultStore()
-const active = ref(1)
+  const store = useConsultStore()
+  const active = ref(1)
 </script>
 
 <template>
@@ -14,9 +14,10 @@ const active = ref(1)
     <!-- 头部 -->
     <div class="home-header">
       <div class="con">
-        <h1>优医</h1>
+        <h1>慧医</h1>
         <div class="search">
-          <cp-icon name="home-search" /> 搜一搜：疾病/症状/医生/健康知识
+          <cp-icon name="home-search" />
+          搜一搜：疾病/症状/医生/健康知识
         </div>
       </div>
     </div>
@@ -31,11 +32,7 @@ const active = ref(1)
           </router-link>
         </van-col>
         <van-col span="8">
-          <router-link
-            to="/consult/fast"
-            class="nav"
-            @click="store.setType(ConsultType.Fast)"
-          >
+          <router-link to="/consult/fast" class="nav" @click="store.setType(ConsultType.Fast)">
             <cp-icon name="home-graphic"></cp-icon>
             <p class="title">极速问诊</p>
             <p class="desc">20s医生极速回复</p>
@@ -101,93 +98,93 @@ const active = ref(1)
 </template>
 
 <style lang="scss" scoped>
-.home-page {
-  padding-bottom: 50px;
-}
-
-.home-header {
-  height: 100px;
-  position: relative;
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 90px;
-    background: linear-gradient(180deg, rgba(62, 206, 197, 0.85), #26bcc6);
-    border-bottom-left-radius: 150px 20px;
-    border-bottom-right-radius: 150px 20px;
+  .home-page {
+    padding-bottom: 50px;
   }
-  .con {
+
+  .home-header {
+    height: 100px;
     position: relative;
-    padding: 0 15px;
-    > h1 {
-      font-size: 18px;
-      color: #fff;
-      font-weight: normal;
-      padding: 20px 0;
-      line-height: 1;
-      padding-left: 5px;
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 90px;
+      background: linear-gradient(180deg, rgba(62, 206, 197, 0.85), #26bcc6);
+      border-bottom-left-radius: 150px 20px;
+      border-bottom-right-radius: 150px 20px;
     }
-    .search {
-      height: 40px;
-      border-radius: 20px;
-      box-shadow: 0px 15px 22px --7px rgba(224, 236, 250, 0.8);
-      background-color: #fff;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      color: var(--cp-dark);
-      font-size: 13px;
-      .cp-icon {
-        font-size: 16px;
-        margin-right: 5px;
+    .con {
+      position: relative;
+      padding: 0 15px;
+      > h1 {
+        font-size: 18px;
+        color: #fff;
+        font-weight: normal;
+        padding: 20px 0;
+        line-height: 1;
+        padding-left: 5px;
+      }
+      .search {
+        height: 40px;
+        border-radius: 20px;
+        box-shadow: 0px 15px 22px --7px rgba(224, 236, 250, 0.8);
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        color: var(--cp-dark);
+        font-size: 13px;
+        .cp-icon {
+          font-size: 16px;
+          margin-right: 5px;
+        }
       }
     }
   }
-}
 
-.home-navs {
-  padding: 10px 15px 0 15px;
-  .nav {
-    display: flex;
-    // 垂直向下排列
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 0;
-    .cp-icon {
-      font-size: 48px;
-    }
-    .title {
-      font-weight: 500;
-      margin-top: 5px;
-      color: var(--cp-text1);
-    }
-    .desc {
-      font-size: 11px;
-      color: var(--cp-text1);
-      margin-top: 2px;
-    }
-    &.min {
+  .home-navs {
+    padding: 10px 15px 0 15px;
+    .nav {
+      display: flex;
+      // 垂直向下排列
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
       .cp-icon {
-        font-size: 31px;
+        font-size: 48px;
       }
       .title {
-        font-size: 13px;
-        color: var(--cp-text2);
-        font-weight: normal;
+        font-weight: 500;
+        margin-top: 5px;
+        color: var(--cp-text1);
+      }
+      .desc {
+        font-size: 11px;
+        color: var(--cp-text1);
+        margin-top: 2px;
+      }
+      &.min {
+        .cp-icon {
+          font-size: 31px;
+        }
+        .title {
+          font-size: 13px;
+          color: var(--cp-text2);
+          font-weight: normal;
+        }
       }
     }
   }
-}
 
-.home-banner {
-  padding: 10px 15px;
-  height: 100px;
-  img {
-    width: 100%;
-    height: 100%;
+  .home-banner {
+    padding: 10px 15px;
+    height: 100px;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
-}
 </style>

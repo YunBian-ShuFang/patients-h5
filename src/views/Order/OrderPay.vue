@@ -85,8 +85,8 @@
     </div>
     <div class="order-medical">
       <div class="header">
-        <h3>优医药房</h3>
-        <small>优医质保 假一赔十</small>
+        <h3>慧医药房</h3>
+        <small>慧医质保 假一赔十</small>
       </div>
       <div class="item van-hairline--top" v-for="med in orderPer.medicines" :key="med.id">
         <img class="img" :src="med.avatar" alt="" />

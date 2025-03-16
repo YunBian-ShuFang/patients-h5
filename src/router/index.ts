@@ -163,7 +163,7 @@ router.beforeEach((to, next) => {
 // 后置守卫
 router.afterEach(to => {
   // 页面标题
-  document.title = `优医问诊-${to.meta.title || ''}`
+  document.title = `慧医问诊-${to.meta.title || ''}`
   // 进度条关闭
   NProgress.done()
 })

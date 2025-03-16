@@ -1,39 +1,39 @@
 <script setup lang="ts">
-import { getUserInfo } from '@/services/user'
-import { useUserStore } from '@/stores'
-import type { UserInfo } from '@/types/user'
-import { showConfirmDialog } from 'vant'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-// 个人用户信息
-const user = ref<UserInfo>()
-onMounted(async () => {
-  const res = await getUserInfo()
-  console.log(res)
-  user.value = res.data
-})
-
-const tools = [
-  { label: '我的问诊', path: '/user/consult' },
-  { label: '我的处方', path: '/' },
-  { label: '家庭档案', path: '/user/patient' },
-  { label: '住址管理', path: '/' },
-  { label: '我的评价', path: '/' },
-  { label: '官方客服', path: '/' },
-  { label: '设置', path: '/' }
-]
-
-// 退出登陆
-const store = useUserStore()
-const router = useRouter()
-const logout = async () => {
-  await showConfirmDialog({
-    title: '温馨提示！',
-    message: '您确认要退出优医问诊吗？'
+  import { getUserInfo } from '@/services/user'
+  import { useUserStore } from '@/stores'
+  import type { UserInfo } from '@/types/user'
+  import { showConfirmDialog } from 'vant'
+  import { onMounted, ref } from 'vue'
+  import { useRouter } from 'vue-router'
+  // 个人用户信息
+  const user = ref<UserInfo>()
+  onMounted(async () => {
+    const res = await getUserInfo()
+    console.log(res)
+    user.value = res.data
   })
-  store.delUser()
-  router.push('/login')
-}
+
+  const tools = [
+    { label: '我的问诊', path: '/user/consult' },
+    { label: '我的处方', path: '/' },
+    { label: '家庭档案', path: '/user/patient' },
+    { label: '住址管理', path: '/' },
+    { label: '我的评价', path: '/' },
+    { label: '官方客服', path: '/' },
+    { label: '设置', path: '/' }
+  ]
+
+  // 退出登陆
+  const store = useUserStore()
+  const router = useRouter()
+  const logout = async () => {
+    await showConfirmDialog({
+      title: '温馨提示！',
+      message: '您确认要退出慧医问诊吗？'
+    })
+    store.delUser()
+    router.push('/login')
+  }
 </script>
 
 <template>
@@ -69,7 +69,8 @@ const logout = async () => {
       <div class="head">
         <h3>药品订单</h3>
         <router-link to="/order">
-          全部订单 <van-icon name="arrow"></van-icon>
+          全部订单
+          <van-icon name="arrow"></van-icon>
         </router-link>
       </div>
       <van-row>
@@ -118,109 +119,105 @@ const logout = async () => {
 </template>
 
 <style lang="scss" scoped>
-.user-page {
-  background-color: var(--cp-bg);
-  min-height: calc(100vh - 50px);
-  padding: 0 15px 65px;
-  // 头部
-  &-head {
-    height: 200px;
-    background: linear-gradient(
-      180deg,
-      rgba(44, 181, 165, 0.46),
-      rgba(44, 181, 165, 0)
-    );
-    margin: 0 -15px;
-    padding: 0 15px;
-    .top {
-      display: flex;
-      padding-top: 50px;
-      align-items: center;
-      .van-image {
-        width: 70px;
-        height: 70px;
+  .user-page {
+    background-color: var(--cp-bg);
+    min-height: calc(100vh - 50px);
+    padding: 0 15px 65px;
+    // 头部
+    &-head {
+      height: 200px;
+      background: linear-gradient(180deg, rgba(44, 181, 165, 0.46), rgba(44, 181, 165, 0));
+      margin: 0 -15px;
+      padding: 0 15px;
+      .top {
+        display: flex;
+        padding-top: 50px;
+        align-items: center;
+        .van-image {
+          width: 70px;
+          height: 70px;
+        }
+        .name {
+          padding-left: 10px;
+          p {
+            &:first-child {
+              font-size: 18px;
+              font-weight: 500;
+            }
+            &:last-child {
+              margin-top: 10px;
+              color: var(--cp-primary);
+              font-size: 16px;
+            }
+          }
+        }
       }
-      .name {
-        padding-left: 10px;
+      .van-row {
+        margin: 0 -15px;
+        padding-top: 15px;
         p {
+          text-align: center;
           &:first-child {
             font-size: 18px;
             font-weight: 500;
           }
           &:last-child {
-            margin-top: 10px;
             color: var(--cp-primary);
-            font-size: 16px;
+            font-size: 12px;
+            padding-top: 4px;
           }
         }
       }
     }
-    .van-row {
-      margin: 0 -15px;
-      padding-top: 15px;
-      p {
-        text-align: center;
-        &:first-child {
-          font-size: 18px;
-          font-weight: 500;
+    // 订单
+    &-order {
+      background-color: #fff;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      padding-bottom: 15px;
+      .head {
+        display: flex;
+        justify-content: space-between;
+        line-height: 50px;
+        padding: 0 15px;
+        a {
+          color: var(--cp-tip);
         }
-        &:last-child {
-          color: var(--cp-primary);
+      }
+      .van-col {
+        text-align: center;
+        .cp-icon {
+          font-size: 28px;
+        }
+        p {
           font-size: 12px;
           padding-top: 4px;
         }
       }
     }
-  }
-  // 订单
-  &-order {
-    background-color: #fff;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    .head {
-      display: flex;
-      justify-content: space-between;
-      line-height: 50px;
-      padding: 0 15px;
-      a {
-        color: var(--cp-tip);
+    // 快捷工具
+    &-group {
+      background-color: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      h3 {
+        padding-left: 16px;
+        line-height: 44px;
       }
-    }
-    .van-col {
-      text-align: center;
+      .van-cell {
+        align-items: center;
+      }
       .cp-icon {
-        font-size: 28px;
-      }
-      p {
-        font-size: 12px;
-        padding-top: 4px;
+        font-size: 17px;
+        margin-right: 10px;
       }
     }
-  }
-  // 快捷工具
-  &-group {
-    background-color: #fff;
-    border-radius: 4px;
-    overflow: hidden;
-    h3 {
-      padding-left: 16px;
-      line-height: 44px;
-    }
-    .van-cell {
-      align-items: center;
-    }
-    .cp-icon {
-      font-size: 17px;
-      margin-right: 10px;
+    .logout {
+      display: block;
+      margin: 20px auto;
+      width: 100px;
+      text-align: center;
+      color: var(--cp-price);
     }
   }
-  .logout {
-    display: block;
-    margin: 20px auto;
-    width: 100px;
-    text-align: center;
-    color: var(--cp-price);
-  }
-}
 </style>
