@@ -1,1 +1,0 @@
-import{i as r}from"./request-C_Fg4goM.js";const i=e=>r({url:"/patient/medicine/order/pre",method:"get",params:e}),d=()=>r({url:"/patient/order/address"}),n=e=>r({url:"/patient/medicine/order",method:"post",data:e}),s=e=>r({url:`/patient/medicine/order/detail/${e}`}),o=e=>r({url:`/patient/order/${e}/logistics`,method:"get"});export{d as a,s as b,n as c,o as d,i as g};
