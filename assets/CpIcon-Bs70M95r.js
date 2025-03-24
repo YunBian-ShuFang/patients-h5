@@ -1,1 +1,0 @@
-import{d as o,b as n,h as s,o as _,_ as a}from"./index-BVy2IOfN.js";const c={"aria-hidden":"true",class:"cp-icon"},t=["href"],r=o({__name:"CpIcon",props:{name:{}},setup(p){return(e,d)=>(_(),n("svg",c,[s("use",{href:`#icon-${e.name}`},null,8,t)]))}}),m=a(r,[["__scopeId","data-v-78dbf222"]]);export{m as _};
