@@ -17,7 +17,6 @@
   const route = useRoute()
   onMounted(async () => {
     const res = await getMedicalOrderLogistics(route.params.id as string)
-    console.log('物流信息--OrderLogistics->', res)
     logistics.value = res.data
 
     // 高德地图
@@ -38,7 +37,7 @@
           hideMarkers: true
         })
 
-        if (logistics.value?.logisticsInfo && logistics.value.logisticsInfo.length >= 22) {
+        if (logistics.value?.logisticsInfo && logistics.value.logisticsInfo.length >= 2) {
           const list = [...logistics.value.logisticsInfo]
 
           // 创建标记函数
@@ -70,7 +69,7 @@
             [start?.longitude, start?.latitude],
             [end?.longitude, end?.latitude],
             { waypoints: list.map(item => [item.longitude, item.latitude]) },
-            () => {
+            (status: any, result: any) => {
               // 规划完毕
               // 运输位置
               const curr = logistics.value?.currentLocationInfo
@@ -97,7 +96,7 @@
 
 <template>
   <div class="order-logistics-page">
-    <div class="map">
+    <div id="map">
       <div class="title">
         <van-icon name="arrow-left" @click="router.back()" />
         <span>{{ logistics?.statusValue }}</span>
